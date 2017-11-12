@@ -1,5 +1,3 @@
-using System;
-
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model {
     public sealed class PlayerContext {
         private readonly Player player;

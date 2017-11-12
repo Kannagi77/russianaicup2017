@@ -32,6 +32,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var minimumDistanceToEnemy = enemyVehicles.GetMinimumDistanceTo(myArmyCenter);
 			if (!isMyArmyStretched && (minimumDistanceToEnemy > 200 || minimumDistanceToEnemy < 100))
 			{
+				var closestToEnemy = myVehicles.GetClosest(enemyVehicles.GetCenterPoint());
+				var nukeTarget = enemyVehicles.GetClosestAtMinimumRange(closestToEnemy, game.TacticalNuclearStrikeRadius);
+				if (nukeTarget != null)
+				{
+					CommandManager.EnqueueCommand(new NukeCommand(closestToEnemy.Id, nukeTarget.X, nukeTarget.Y));
+				}
 				return StrategyState.Attack;
 			}
 			started = false;
