@@ -1,25 +1,21 @@
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 {
 	public sealed class MyStrategy : IStrategy
 	{
+		private static readonly CommandManager CommandManager = new CommandManager();
+		private static readonly VehicleRegistry VehicleRegistry = new VehicleRegistry();
+		private readonly MoveSelector moveSelector = new MoveSelector(CommandManager, VehicleRegistry);
+		private StrategyState currentState = StrategyState.InitialPoint;
+
 		public void Move(Player me, World world, Game game, Move move)
 		{
-			if (world.TickIndex == 0)
-			{
-				move.Action = ActionType.ClearAndSelect;
-				move.Right = world.Width;
-				move.Bottom = world.Height;
+			VehicleRegistry.Update(world);
+			if (CommandManager.PlayCommandIfPossible(me, move))
 				return;
-			}
-
-			if (world.TickIndex == 1)
-			{
-				move.Action = ActionType.Move;
-				move.X = world.Width / 2.0D;
-				move.Y = world.Height / 2.0D;
-			}
+			currentState = moveSelector.MakeNextMove(currentState, world, me);
 		}
 	}
 }
