@@ -14,6 +14,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			VehicleRegistry = vehicleRegistry;
 		}
 
-		public abstract StrategyState Perform(World world, Player me);
+		public abstract StrategyState Perform(World world, Player me, Game game);
 	}
 }

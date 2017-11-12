@@ -15,7 +15,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me)
+		public override StrategyState Perform(World world, Player me, Game game)
 		{
 			var currentCenterPoint = VehicleRegistry.MyVehicles(me).GetCenterPoint();
 			if (!started)

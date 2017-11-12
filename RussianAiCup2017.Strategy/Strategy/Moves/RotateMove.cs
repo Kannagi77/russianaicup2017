@@ -16,13 +16,16 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me)
+		public override StrategyState Perform(World world, Player me, Game game)
 		{
 			var currentCenterPoint = VehicleRegistry.MyVehicles(me).GetCenterPoint();
-			if (!started)
+			if (!started && CommandManager.GetCurrentQueueSize() < 10)
 			{
-				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-				CommandManager.EnqueueCommand(new RotateCommand(currentCenterPoint, Math.PI));
+				RotateVehicles(world, game, currentCenterPoint, VehicleType.Tank);
+				RotateVehicles(world, game, currentCenterPoint, VehicleType.Fighter);
+				RotateVehicles(world, game, currentCenterPoint, VehicleType.Arrv);
+				RotateVehicles(world, game, currentCenterPoint, VehicleType.Helicopter);
+				RotateVehicles(world, game, currentCenterPoint, VehicleType.Ifv);
 				started = true;
 			}
 			StrategyState result;
@@ -37,6 +40,24 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			}
 			previousCenterPoint = currentCenterPoint;
 			return result;
+		}
+
+		private void RotateVehicles(World world, Game game, Point2D currentCenterPoint, VehicleType type)
+		{
+			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type));
+			CommandManager.EnqueueCommand(new RotateCommand(currentCenterPoint, GetRotationAngle(game)));
+		}
+
+		private static double GetRotationAngle(Game game)
+		{
+			unchecked
+			{
+				var randomSeed = (int) game.RandomSeed;
+				var random = new Random(randomSeed);
+				var angle = random.Next(10) - 5;
+				var radians = angle.ToRadians();
+				return Math.PI / 10 + radians;
+			}
 		}
 	}
 }

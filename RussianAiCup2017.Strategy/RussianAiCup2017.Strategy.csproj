@@ -90,6 +90,7 @@
     <Compile Include="Model\WeatherType.cs" />
     <Compile Include="Model\World.cs" />
     <Compile Include="IStrategy.cs" />
+    <Compile Include="Strategy\Helpers\AngleHelper.cs" />
     <Compile Include="Strategy\Moves\AttackMove.cs" />
     <Compile Include="Strategy\Moves\GatherMove.cs" />
     <Compile Include="Strategy\MoveSelector.cs" />

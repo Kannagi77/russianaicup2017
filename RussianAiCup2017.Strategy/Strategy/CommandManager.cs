@@ -45,5 +45,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		{
 			return player.RemainingActionCooldownTicks == 0;
 		}
+
+		public int GetCurrentQueueSize()
+		{
+			return commandsQueue.Count;
+		}
 	}
 }

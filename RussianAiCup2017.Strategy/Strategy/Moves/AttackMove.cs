@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
@@ -14,9 +16,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me)
+		public override StrategyState Perform(World world, Player me, Game game)
 		{
-			var myArmyCenter = VehicleRegistry.MyVehicles(me).GetCenterPoint();
+			var myVehicles = VehicleRegistry.MyVehicles(me);
+			var myArmyCenter = myVehicles.GetCenterPoint();
 			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
 			if (!started)
 			{
@@ -25,13 +28,24 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				CommandManager.EnqueueCommand(new MoveCommand(enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2));
 				started = true;
 			}
+			var isMyArmyStretched = IsMyArmyStretched(myVehicles);
 			var minimumDistanceToEnemy = enemyVehicles.GetMinimumDistanceTo(myArmyCenter);
-			if (minimumDistanceToEnemy > 100)
+			if (!isMyArmyStretched && (minimumDistanceToEnemy > 200 || minimumDistanceToEnemy < 100))
 			{
 				return StrategyState.Attack;
 			}
 			started = false;
 			return StrategyState.Shrink;
+		}
+
+		private static bool IsMyArmyStretched(IReadOnlyCollection<Vehicle> myVehicles)
+		{
+			var minX = myVehicles.Min(v => v.X);
+			var maxX = myVehicles.Max(v => v.X);
+			var minY = myVehicles.Min(v => v.Y);
+			var maxY = myVehicles.Max(v => v.Y);
+			const int threshold = 150;
+			return maxX - minX > threshold || maxY - minY > threshold;
 		}
 	}
 }

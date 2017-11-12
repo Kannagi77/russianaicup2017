@@ -15,7 +15,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			VehicleRegistry.Update(world);
 			if (CommandManager.PlayCommandIfPossible(me, move))
 				return;
-			currentState = moveSelector.MakeNextMove(currentState, world, me);
+			currentState = moveSelector.MakeNextMove(currentState, world, me, game);
 		}
 	}
 }

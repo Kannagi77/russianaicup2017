@@ -14,7 +14,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me)
+		public override StrategyState Perform(World world, Player me, Game game)
 		{
 			var gatheringPoint = new Point2D(world.Width / 15.0, world.Height / 15.0);
 			if (world.TickIndex == 0)

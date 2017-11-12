@@ -21,9 +21,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			};
 		}
 
-		public StrategyState MakeNextMove(StrategyState currentState, World world, Player player)
+		public StrategyState MakeNextMove(StrategyState currentState, World world, Player player, Game game)
 		{
-			return moves.First(m => m.State == currentState).Perform(world, player);
+			return moves.First(m => m.State == currentState).Perform(world, player, game);
 		}
 	}
 }
