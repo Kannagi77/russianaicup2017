@@ -12,10 +12,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		{
 			moves = new StrategyMove[]
 			{
-				new InitialPointMove(commandManager, vehicleRegistry), 
+				new InitialPointMove(commandManager, vehicleRegistry),
 				new ScaleMove(commandManager, vehicleRegistry),
 				new GatherMove(commandManager, vehicleRegistry),
-				new ShrinkMove(commandManager, vehicleRegistry), 
+				new ShrinkMove(commandManager, vehicleRegistry),
+				new RotateMove(commandManager, vehicleRegistry),
 				new AttackMove(commandManager, vehicleRegistry)
 			};
 		}

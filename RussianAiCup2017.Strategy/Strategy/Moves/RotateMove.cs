@@ -1,16 +1,17 @@
-﻿using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
+﻿using System;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 {
-	public class ShrinkMove : StrategyMove
+	public class RotateMove : StrategyMove
 	{
-		public override StrategyState State => StrategyState.Shrink;
+		public override StrategyState State => StrategyState.Rotate;
 		private Point2D previousCenterPoint;
 		private bool started;
 
-		public ShrinkMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
+		public RotateMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
 			: base(commandManager, vehicleRegistry)
 		{
 		}
@@ -21,17 +22,17 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			if (!started)
 			{
 				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-				CommandManager.EnqueueCommand(new ScaleCommand(currentCenterPoint, 0.1));
+				CommandManager.EnqueueCommand(new RotateCommand(currentCenterPoint, Math.PI));
 				started = true;
 			}
 			StrategyState result;
 			if (currentCenterPoint != previousCenterPoint)
 			{
-				result = StrategyState.Shrink;
+				result = StrategyState.Rotate;
 			}
 			else
 			{
-				result = StrategyState.Rotate;
+				result = StrategyState.Attack;
 				started = false;
 			}
 			previousCenterPoint = currentCenterPoint;

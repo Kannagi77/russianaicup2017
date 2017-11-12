@@ -9,6 +9,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly double y;
 		private readonly double angle;
 
+		public RotateCommand(Point2D p, double angle)
+			: this(p.X, p.Y, angle)
+		{
+		}
+
 		public RotateCommand(double x, double y, double angle)
 		{
 			this.x = x;
