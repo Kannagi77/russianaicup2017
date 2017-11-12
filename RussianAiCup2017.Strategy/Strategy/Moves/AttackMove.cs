@@ -40,6 +40,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				}
 				return StrategyState.Attack;
 			}
+			CommandManager.ClearCommandsQueue();
+			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
+			CommandManager.EnqueueCommand(new MoveCommand(myArmyCenter));
 			started = false;
 			return StrategyState.Shrink;
 		}

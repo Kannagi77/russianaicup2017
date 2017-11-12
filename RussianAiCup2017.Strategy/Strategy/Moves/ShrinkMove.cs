@@ -20,8 +20,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var currentCenterPoint = VehicleRegistry.MyVehicles(me).GetCenterPoint();
 			if (!started)
 			{
-				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-				CommandManager.EnqueueCommand(new ScaleCommand(currentCenterPoint, 0.1));
+				ShrinkVehicles(world, currentCenterPoint, VehicleType.Tank);
+				ShrinkVehicles(world, currentCenterPoint, VehicleType.Fighter);
+				ShrinkVehicles(world, currentCenterPoint, VehicleType.Arrv);
+				ShrinkVehicles(world, currentCenterPoint, VehicleType.Helicopter);
+				ShrinkVehicles(world, currentCenterPoint, VehicleType.Ifv);
 				started = true;
 			}
 			StrategyState result;
@@ -36,6 +39,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			}
 			previousCenterPoint = currentCenterPoint;
 			return result;
+		}
+
+		private void ShrinkVehicles(World world, Point2D currentCenterPoint, VehicleType type)
+		{
+			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type));
+			CommandManager.EnqueueCommand(new ScaleCommand(currentCenterPoint, 0.1));
 		}
 	}
 }
