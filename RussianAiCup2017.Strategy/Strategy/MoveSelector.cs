@@ -15,6 +15,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 				new InitialPointMove(commandManager, vehicleRegistry), 
 				new ScaleMove(commandManager, vehicleRegistry),
 				new GatherMove(commandManager, vehicleRegistry),
+				new ShrinkMove(commandManager, vehicleRegistry), 
 				new AttackMove(commandManager, vehicleRegistry)
 			};
 		}

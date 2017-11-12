@@ -5,6 +5,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		InitialPoint,
 		Scale,
 		Gather,
+		Shrink,
 		Attack
 	}
 }

@@ -99,6 +99,7 @@
     <Compile Include="Runner.cs" />
     <Compile Include="Strategy\Moves\ScaleMove.cs" />
     <Compile Include="Strategy\Moves\InitialPointMove.cs" />
+    <Compile Include="Strategy\Moves\ShrinkMove.cs" />
     <Compile Include="Strategy\Moves\StrategyMove.cs" />
     <Compile Include="Strategy\StrategyState.cs" />
     <Compile Include="Strategy\Commands\Command.cs" />

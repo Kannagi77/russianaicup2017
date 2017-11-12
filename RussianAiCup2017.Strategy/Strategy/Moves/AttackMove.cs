@@ -16,21 +16,22 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		public override StrategyState Perform(World world, Player me)
 		{
-			if (!started)
-			{
-				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-				CommandManager.EnqueueCommand(new MoveCommand(world.Width, world.Height, 0.2));
-				started = true;
-			}
 			var myArmyCenter = VehicleRegistry.MyVehicles(me).GetCenterPoint();
 			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
+			if (!started)
+			{
+				var enemiesCenterPoint = enemyVehicles.GetCenterPoint();
+				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
+				CommandManager.EnqueueCommand(new MoveCommand(enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2));
+				started = true;
+			}
 			var minimumDistanceToEnemy = enemyVehicles.GetMinimumDistanceTo(myArmyCenter);
 			if (minimumDistanceToEnemy > 100)
 			{
 				return StrategyState.Attack;
 			}
 			started = false;
-			return StrategyState.Gather;
+			return StrategyState.Shrink;
 		}
 	}
 }

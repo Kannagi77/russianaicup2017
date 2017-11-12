@@ -36,7 +36,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			}
 			else
 			{
-				result = StrategyState.Attack;
+				result = StrategyState.Shrink;
 				started = false;
 			}
 			previousCenterPoint = currentCenterPoint;
