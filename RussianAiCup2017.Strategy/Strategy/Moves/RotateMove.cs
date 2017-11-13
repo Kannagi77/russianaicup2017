@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 {
@@ -18,14 +21,15 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		public override StrategyState Perform(World world, Player me, Game game)
 		{
-			var currentCenterPoint = VehicleRegistry.MyVehicles(me).GetCenterPoint();
+			var myVehicles = VehicleRegistry.MyVehicles(me);
+			var currentCenterPoint = myVehicles.GetCenterPoint();
 			if (!started && CommandManager.GetCurrentQueueSize() < 10)
 			{
-				RotateVehicles(world, game, currentCenterPoint, VehicleType.Tank);
-				RotateVehicles(world, game, currentCenterPoint, VehicleType.Fighter);
-				RotateVehicles(world, game, currentCenterPoint, VehicleType.Arrv);
-				RotateVehicles(world, game, currentCenterPoint, VehicleType.Helicopter);
-				RotateVehicles(world, game, currentCenterPoint, VehicleType.Ifv);
+				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Tank);
+				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Fighter);
+				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Arrv);
+				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Helicopter);
+				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Ifv);
 				started = true;
 			}
 			StrategyState result;
@@ -42,10 +46,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			return result;
 		}
 
-		private void RotateVehicles(World world, Game game, Point2D currentCenterPoint, VehicleType type)
+		private void RotateVehicles(IEnumerable<VehicleWrapper> vehicles, World world, Game game, Point2D currentCenterPoint, VehicleType type)
 		{
+			var selectedVehicles = vehicles.Where(v => v.Type == type).ToList();
 			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type));
-			CommandManager.EnqueueCommand(new RotateCommand(currentCenterPoint, GetRotationAngle(game)));
+			CommandManager.EnqueueCommand(new RotateCommand(selectedVehicles, currentCenterPoint, GetRotationAngle(game), true));
 		}
 
 		private static double GetRotationAngle(Game game)

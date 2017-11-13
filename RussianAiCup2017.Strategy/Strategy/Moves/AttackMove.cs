@@ -3,6 +3,7 @@ using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 {
@@ -25,7 +26,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			{
 				var enemiesCenterPoint = enemyVehicles.GetCenterPoint();
 				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-				CommandManager.EnqueueCommand(new MoveCommand(enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2));
+				CommandManager.EnqueueCommand(new MoveCommand(myVehicles, enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2));
 				started = true;
 			}
 			var isMyArmyStretched = IsMyArmyStretched(myVehicles);
@@ -42,12 +43,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			}
 			CommandManager.ClearCommandsQueue();
 			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-			CommandManager.EnqueueCommand(new MoveCommand(myArmyCenter));
+			CommandManager.EnqueueCommand(new MoveCommand(myVehicles, myArmyCenter));
 			started = false;
 			return StrategyState.Shrink;
 		}
 
-		private static bool IsMyArmyStretched(IReadOnlyCollection<Vehicle> myVehicles)
+		private static bool IsMyArmyStretched(IReadOnlyCollection<VehicleWrapper> myVehicles)
 		{
 			var minX = myVehicles.Min(v => v.X);
 			var maxX = myVehicles.Max(v => v.X);

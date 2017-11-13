@@ -5,6 +5,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	public class SelectCommand : Command
 	{
 		private const ActionType ActionType = Model.ActionType.ClearAndSelect;
+		private bool isStarted;
 		private readonly double x1;
 		private readonly double y1;
 		private readonly double x2;
@@ -36,6 +37,23 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			{
 				move.VehicleType = type.Value;
 			}
+
+			isStarted = true;
+		}
+
+		public override bool IsStarted()
+		{
+			return isStarted;
+		}
+
+		public override bool IsFinished()
+		{
+			return true;
+		}
+
+		public override bool CanBeParallel()
+		{
+			return false;
 		}
 	}
 }

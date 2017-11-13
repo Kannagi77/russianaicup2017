@@ -36,8 +36,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			var canPlayCommand = CanPlayCommand(player);
 			if (!canPlayCommand)
 				return false;
-			var currentCommand = commandsQueue.Dequeue();
-			currentCommand.Commit(move);
+			var currentCommand = commandsQueue.Peek();
+			if (!currentCommand.IsStarted())
+				currentCommand.Commit(move);
+			if (currentCommand.CanBeParallel() || currentCommand.IsFinished())
+				commandsQueue.Dequeue();
 			return true;
 		}
 

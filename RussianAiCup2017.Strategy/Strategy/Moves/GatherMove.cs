@@ -45,9 +45,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		private void MoveToCenter(World world, Player me, Point2D centerPoint, VehicleType type)
 		{
-			var groupCenterPoint = VehicleRegistry.MyVehicles(me).Where(v => v.Type == type).GetCenterPoint();
+			var vehicles = VehicleRegistry.MyVehicles(me).Where(v => v.Type == type).ToList();
+			var groupCenterPoint = vehicles.GetCenterPoint();
 			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type));
-			CommandManager.EnqueueCommand(new MoveCommand(centerPoint.X - groupCenterPoint.X, centerPoint.Y - groupCenterPoint.Y));
+			CommandManager.EnqueueCommand(new MoveCommand(vehicles, centerPoint.X - groupCenterPoint.X, centerPoint.Y - groupCenterPoint.Y, true));
 		}
 	}
 }

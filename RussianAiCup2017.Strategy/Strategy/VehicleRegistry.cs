@@ -1,40 +1,57 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 {
 	public class VehicleRegistry
 	{
-		private readonly List<Vehicle> vehicles = new List<Vehicle>();
+		private List<VehicleWrapper> vehicles = new List<VehicleWrapper>();
 		public void Update(World world)
 		{
-			vehicles.AddRange(world.NewVehicles);
-			foreach (var vehicleUpdate in world.VehicleUpdates)
+			var updatedVehicles = new List<VehicleWrapper>();
+			vehicles.AddRange(world.NewVehicles.Select(nv => new VehicleWrapper(nv)));
+			foreach (var vehicleWrapper in vehicles)
 			{
-				var currentVehicle = vehicles.FirstOrDefault(v => v.Id == vehicleUpdate.Id);
-				if (currentVehicle == null)
+				var currentUpdate = world.VehicleUpdates.FirstOrDefault(v => v.Id == vehicleWrapper.Id);
+				if (currentUpdate == null)
+				{
+					vehicleWrapper.IsIdle = true;
+					updatedVehicles.Add(vehicleWrapper);
 					continue;
-				vehicles.Remove(currentVehicle);
-				if (vehicleUpdate.Durability == 0)
+				}
+				if (currentUpdate.Durability == 0)
 				{
 					continue;
 				}
-				vehicles.Add(new Vehicle(currentVehicle, vehicleUpdate));
+				if (Math.Abs(currentUpdate.X - vehicleWrapper.X) < double.Epsilon &&
+				    Math.Abs(currentUpdate.Y - vehicleWrapper.Y) < double.Epsilon)
+				{
+					vehicleWrapper.IsIdle = true;
+				}
+				else
+				{
+					vehicleWrapper.IsIdle = false;
+				}
+				vehicleWrapper.Vehicle = new Vehicle(vehicleWrapper.Vehicle, currentUpdate);
+				updatedVehicles.Add(vehicleWrapper);
 			}
+			vehicles = updatedVehicles;
 		}
 
-		public List<Vehicle> MyVehicles(Player me)
+		public List<VehicleWrapper> MyVehicles(Player me)
 		{
 			return vehicles.Where(v => v.PlayerId == me.Id).ToList();
 		}
 
-		public List<Vehicle> EnemyVehicles(Player me)
+		public List<VehicleWrapper> EnemyVehicles(Player me)
 		{
 			return vehicles.Where(v => v.PlayerId != me.Id).ToList();
 		}
 
-		public List<Vehicle> SelectedVehicles(Player me)
+		public List<VehicleWrapper> SelectedVehicles(Player me)
 		{
 			return MyVehicles(me).Where(v => v.IsSelected).ToList();
 		}
