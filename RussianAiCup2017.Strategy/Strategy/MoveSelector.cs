@@ -23,7 +23,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 
 		public StrategyState MakeNextMove(StrategyState currentState, World world, Player player, Game game)
 		{
-			return moves.First(m => m.State == currentState).Perform(world, player, game);
+			var strategyMove = moves.First(m => m.State == currentState);
+#if DEBUG
+			Debug.beginPre();
+			Debug.print(10, world.Height/2, $"PERFORMING {strategyMove.State} MOVE", 0x0000FF);
+			Debug.endPre();
+#endif
+			return strategyMove.Perform(world, player, game);
 		}
 	}
 }

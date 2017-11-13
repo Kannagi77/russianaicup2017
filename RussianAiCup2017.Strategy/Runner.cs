@@ -28,7 +28,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 				};
 				Process.Start(localRunnerProcessStartInfo);
 				Thread.Sleep(2000);
+#if DEBUG
+				Debug.connect("127.0.0.1", 13579);
+#endif
 				new Runner(new[] { "127.0.0.1", "31001", "0000000000000000" }).Run();
+#if DEBUG
+				Debug.disconnect();
+#endif
 			}
 		}
 
