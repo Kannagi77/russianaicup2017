@@ -48,8 +48,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		private void ShrinkVehicles(IEnumerable<VehicleWrapper> vehicles, World world, Point2D currentCenterPoint, VehicleType type)
 		{
 			var selectedVehicles = vehicles.Where(v => v.Type == type).ToList();
-			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type));
-			CommandManager.EnqueueCommand(new ScaleCommand(selectedVehicles, currentCenterPoint, 0.1, true));
+			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type), world.TickIndex);
+			CommandManager.EnqueueCommand(new ScaleCommand(selectedVehicles, currentCenterPoint, 0.1, true), world.TickIndex);
 		}
 	}
 }

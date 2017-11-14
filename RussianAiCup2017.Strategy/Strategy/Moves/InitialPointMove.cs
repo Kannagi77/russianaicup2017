@@ -19,9 +19,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var myVehicles = VehicleRegistry.MyVehicles(me);
 			if (command == null)
 			{
-				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
+				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
 				command = new MoveCommand(myVehicles, gatheringPoint);
-				CommandManager.EnqueueCommand(command);
+				CommandManager.EnqueueCommand(command, world.TickIndex);
 			}
 			if (command != null && command.IsStarted() && command.IsFinished())
 			{

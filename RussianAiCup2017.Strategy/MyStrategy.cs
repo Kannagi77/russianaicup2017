@@ -13,7 +13,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 		public void Move(Player me, World world, Game game, Move move)
 		{
 			VehicleRegistry.Update(world);
-			if (CommandManager.PlayCommandIfPossible(me, move))
+			if (CommandManager.PlayCommandIfPossible(me, move, world.TickIndex))
 				return;
 			currentState = moveSelector.MakeNextMove(currentState, world, me, game);
 		}

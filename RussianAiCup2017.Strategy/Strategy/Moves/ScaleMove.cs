@@ -46,8 +46,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var centerPoint = vehicles.GetCenterPoint();
 			var selectCommand = new SelectCommand(0, 0, world.Width, world.Height, type);
 			var scaleCommand = new ScaleCommand(vehicles, centerPoint, factor, true);
-			CommandManager.EnqueueCommand(selectCommand);
-			CommandManager.EnqueueCommand(scaleCommand);
+			CommandManager.EnqueueCommand(selectCommand, world.TickIndex);
+			CommandManager.EnqueueCommand(scaleCommand, world.TickIndex);
 			commands.Add(scaleCommand);
 		}
 	}

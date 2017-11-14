@@ -25,8 +25,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			if (!started)
 			{
 				var enemiesCenterPoint = enemyVehicles.GetCenterPoint();
-				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-				CommandManager.EnqueueCommand(new MoveCommand(myVehicles, enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2));
+				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
+				CommandManager.EnqueueCommand(new MoveCommand(myVehicles,
+					enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2), world.TickIndex);
 				started = true;
 			}
 			var isMyArmyStretched = IsMyArmyStretched(myVehicles);
@@ -37,13 +38,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				var nukeTarget = enemyVehicles.GetClosestAtMinimumRange(closestToEnemy, game.TacticalNuclearStrikeRadius);
 				if (nukeTarget != null)
 				{
-					CommandManager.EnqueueCommand(new NukeCommand(closestToEnemy.Id, nukeTarget.X, nukeTarget.Y));
+					CommandManager.EnqueueCommand(new NukeCommand(closestToEnemy.Id, nukeTarget.X, nukeTarget.Y), world.TickIndex);
 				}
 				return StrategyState.Attack;
 			}
 			CommandManager.ClearCommandsQueue();
-			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height));
-			CommandManager.EnqueueCommand(new MoveCommand(myVehicles, myArmyCenter));
+			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
+			CommandManager.EnqueueCommand(new MoveCommand(myVehicles, 0, 0), world.TickIndex);
 			started = false;
 			return StrategyState.Shrink;
 		}
