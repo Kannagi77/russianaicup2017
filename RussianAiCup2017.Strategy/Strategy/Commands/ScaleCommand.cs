@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
-using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
@@ -9,18 +8,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	{
 		private const ActionType ActionType = Model.ActionType.Scale;
 		private bool isStarted;
-		private readonly IList<VehicleWrapper> vehicles;
+		private readonly IList<Vehicle> vehicles;
 		private readonly double x;
 		private readonly double y;
 		private readonly double factor;
 		private readonly bool canBeParallel;
 
-		public ScaleCommand(IList<VehicleWrapper> vehicles, Point2D point, double factor, bool canBeParallel = false)
+		public ScaleCommand(IList<Vehicle> vehicles, Point2D point, double factor, bool canBeParallel = false)
 			: this(vehicles, point.X, point.Y, factor, canBeParallel)
 		{
 		}
 
-		public ScaleCommand(IList<VehicleWrapper> vehicles, double x, double y, double factor, bool canBeParallel = false)
+		public ScaleCommand(IList<Vehicle> vehicles, double x, double y, double factor, bool canBeParallel = false)
 		{
 			this.vehicles = vehicles;
 			this.x = x;
@@ -29,12 +28,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			this.canBeParallel = canBeParallel;
 		}
 
-		public override void Commit(Move move)
+		public override void Commit(Move move, VehicleRegistry registry)
 		{
-			foreach (var vehicle in vehicles)
-			{
-				vehicle.IsIdle = false;
-			}
 			move.Action = ActionType;
 			move.X = x;
 			move.Y = y;
@@ -48,9 +43,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			return isStarted;
 		}
 
-		public override bool IsFinished()
+		public override bool IsFinished(VehicleRegistry registry)
 		{
-			return vehicles.All(v => v.IsIdle);
+			return vehicles.All(registry.IsVehicleIdle);
 		}
 
 		public override bool CanBeParallel()

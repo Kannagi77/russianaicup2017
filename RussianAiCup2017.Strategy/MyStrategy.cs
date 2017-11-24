@@ -8,12 +8,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 		private static readonly CommandManager CommandManager = new CommandManager();
 		private static readonly VehicleRegistry VehicleRegistry = new VehicleRegistry();
 		private readonly MoveSelector moveSelector = new MoveSelector(CommandManager, VehicleRegistry);
-		private StrategyState currentState = StrategyState.InitialPoint;
+		private StrategyState currentState = StrategyState.InitFormation;
 
 		public void Move(Player me, World world, Game game, Move move)
 		{
-			VehicleRegistry.Update(world);
-			if (CommandManager.PlayCommandIfPossible(me, move, world.TickIndex))
+			VehicleRegistry.Update(world, me, game);
+			if (CommandManager.PlayCommandIfPossible(VehicleRegistry, me, move, world.TickIndex))
 				return;
 			currentState = moveSelector.MakeNextMove(currentState, world, me, game);
 		}

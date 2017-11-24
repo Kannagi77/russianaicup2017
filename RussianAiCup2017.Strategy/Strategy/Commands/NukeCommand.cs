@@ -17,7 +17,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			this.y = y;
 		}
 
-		public override void Commit(Move move)
+		public override void Commit(Move move, VehicleRegistry registry)
 		{
 			move.Action = ActionType;
 			move.VehicleId = vehicleId;
@@ -32,7 +32,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			return isStarted;
 		}
 
-		public override bool IsFinished()
+		public override bool IsFinished(VehicleRegistry registry)
 		{
 			return true;
 		}

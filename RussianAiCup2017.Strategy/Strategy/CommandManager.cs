@@ -9,7 +9,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 	public class CommandManager
 	{
 		private readonly Queue<Tuple<Command, int>> commandsQueue = new Queue<Tuple<Command, int>>();
-		private const int CommandTimeout = 150;
+		private const int CommandTimeout = 450;
+		private bool forcePlayNextCommand;
 
 		public void EnqueueCommand(Command command, int worldTick)
 		{
@@ -26,12 +27,17 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return commandsQueue.Peek().Item1;
 		}
 
+		public Command PeekLastCommand()
+		{
+			return commandsQueue.Last().Item1;
+		}
+
 		public List<Command> PeekCommands(int count)
 		{
 			return commandsQueue.Take(count).Select(t => t.Item1).ToList();
 		}
 
-		public bool PlayCommandIfPossible(Player player, Move move, int worldTick)
+		public bool PlayCommandIfPossible(VehicleRegistry registry, Player player, Move move, int worldTick)
 		{
 			if (commandsQueue.Count == 0)
 				return false;
@@ -41,9 +47,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			var currentCommand = commandsQueue.Peek().Item1;
 			var currentCommandStartTick = commandsQueue.Peek().Item2;
 			if (!currentCommand.IsStarted())
-				currentCommand.Commit(move);
-			if (currentCommand.CanBeParallel() || currentCommand.IsFinished() || worldTick - currentCommandStartTick > CommandTimeout)
+				currentCommand.Commit(move, registry);
+			if (forcePlayNextCommand)
+			{
+				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;
+				return true;
+			}
+			if (currentCommand.CanBeParallel() || currentCommand.IsFinished(registry) ||
+			    worldTick - currentCommandStartTick > CommandTimeout)
+			{
+				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;
 				commandsQueue.Dequeue();
+			}
 			return true;
 		}
 

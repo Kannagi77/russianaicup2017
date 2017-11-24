@@ -19,14 +19,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		public override StrategyState Perform(World world, Player me, Game game)
 		{
 			var myVehicles = VehicleRegistry.MyVehicles(me);
-			var myVehicleIds = VehicleRegistry.MyVehicleIds(me);
 			var myArmyCenter = myVehicles.GetCenterPoint();
 			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
 			if (!started)
 			{
 				var enemiesCenterPoint = enemyVehicles.GetCenterPoint();
 				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
-				CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds,
+				CommandManager.EnqueueCommand(new MoveCommand(myVehicles,
 					enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2), world.TickIndex);
 				started = true;
 			}
@@ -44,7 +43,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			}
 			CommandManager.ClearCommandsQueue();
 			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
-			CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds, 0, 0), world.TickIndex);
+			CommandManager.EnqueueCommand(new MoveCommand(myVehicles, 0, 0), world.TickIndex);
 			started = false;
 			return StrategyState.Shrink;
 		}
@@ -55,7 +54,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var maxX = myVehicles.Max(v => v.X);
 			var minY = myVehicles.Min(v => v.Y);
 			var maxY = myVehicles.Max(v => v.Y);
+<<<<<<< HEAD
+			const int threshold = 200;
+=======
 			const int threshold = 450;
+>>>>>>> Refactoring + formation improvement
 			return maxX - minX > threshold || maxY - minY > threshold;
 		}
 	}

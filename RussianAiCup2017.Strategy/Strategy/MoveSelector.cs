@@ -12,7 +12,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		{
 			moves = new StrategyMove[]
 			{
-				new InitialPointMove(commandManager, vehicleRegistry),
+				new InitFormationMove(commandManager, vehicleRegistry),
+				new DiagonalFormationMove(commandManager, vehicleRegistry),
+				new CornerFormationMove(commandManager, vehicleRegistry),
+				new GappedFormationMove(commandManager, vehicleRegistry), 
+				new TwoOnOneLineFormationMove(commandManager, vehicleRegistry),
+				new FinishAirMove(commandManager, vehicleRegistry), 
+				new FinishFormationMove(commandManager, vehicleRegistry),
 				new ScaleMove(commandManager, vehicleRegistry),
 				new GatherMove(commandManager, vehicleRegistry),
 				new ShrinkMove(commandManager, vehicleRegistry),
@@ -25,9 +31,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		{
 			var strategyMove = moves.First(m => m.State == currentState);
 #if DEBUG
-			Debug.beginPre();
-			Debug.print(10, world.Height/2, $"PERFORMING {strategyMove.State} MOVE", 0x0000FF);
-			Debug.endPre();
+			RewindClient.Instance.Message($"Move: {strategyMove.State}");
+			RewindClient.Instance.End();
 #endif
 			return strategyMove.Perform(world, player, game);
 		}

@@ -3,7 +3,6 @@ using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
-using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 {
@@ -31,7 +30,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				ScaleVehicles(vehicles, VehicleType.Arrv, factor, world);
 				started = true;
 			}
-			if (commands.Any() && commands.All(c => c.IsStarted() && c.IsFinished()))
+			if (commands.Any() && commands.All(c => c.IsStarted() && c.IsFinished(VehicleRegistry)))
 			{
 				commands.Clear();
 				started = false;
@@ -40,7 +39,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			return StrategyState.Scale;
 		}
 
-		private void ScaleVehicles(IEnumerable<VehicleWrapper> allVehicles, VehicleType type, double factor, World world)
+		private void ScaleVehicles(IEnumerable<Vehicle> allVehicles, VehicleType type, double factor, World world)
 		{
 			var vehicles = allVehicles.Where(v => v.Type == type).ToList();
 			var centerPoint = vehicles.GetCenterPoint();

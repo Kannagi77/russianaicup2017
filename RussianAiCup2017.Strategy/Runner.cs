@@ -19,6 +19,16 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			}
 			else
 			{
+				var rewindviewerProcessStartInfo = new ProcessStartInfo
+				{
+					WorkingDirectory = @"D:\Source\russianaicup\russianaicup2017\rewind-viewer",
+					FileName = @"D:\Source\russianaicup\russianaicup2017\rewind-viewer\rewindviewer.exe",
+					CreateNoWindow = false,
+					UseShellExecute = false
+				};
+				Process.Start(rewindviewerProcessStartInfo);
+				Thread.Sleep(2000);
+
 				var localRunnerProcessStartInfo = new ProcessStartInfo
 				{
 					WorkingDirectory = @"D:\Source\russianaicup\russianaicup2017\local-runner",
@@ -28,13 +38,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 				};
 				Process.Start(localRunnerProcessStartInfo);
 				Thread.Sleep(2000);
-#if DEBUG
-				Debug.connect("127.0.0.1", 13579);
-#endif
+
 				new Runner(new[] { "127.0.0.1", "31001", "0000000000000000" }).Run();
-#if DEBUG
-				Debug.disconnect();
-#endif
 			}
 		}
 

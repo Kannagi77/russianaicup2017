@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
-using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 {
 	public class RotateMove : StrategyMove
 	{
 		public override StrategyState State => StrategyState.Rotate;
-		private Point2D previousCenterPoint;
-		private bool started;
+		private RotateCommand command;
 
 		public RotateMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
 			: base(commandManager, vehicleRegistry)
@@ -21,48 +17,36 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		public override StrategyState Perform(World world, Player me, Game game)
 		{
-			var myVehicles = VehicleRegistry.MyVehicles(me);
-			var currentCenterPoint = myVehicles.GetCenterPoint();
-			if (!started && CommandManager.GetCurrentQueueSize() < 10)
+			if (command == null)
 			{
-				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Tank);
-				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Fighter);
-				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Arrv);
-				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Helicopter);
-				RotateVehicles(myVehicles, world, game, currentCenterPoint, VehicleType.Ifv);
-				started = true;
+				DoWork(me, world);
 			}
-			StrategyState result;
-			if (currentCenterPoint != previousCenterPoint)
+
+			if (command != null && command.IsStarted() && command.IsFinished(VehicleRegistry))
 			{
-				result = StrategyState.Rotate;
+				command = null;
+				return StrategyState.Attack;
 			}
-			else
-			{
-				result = StrategyState.Attack;
-				started = false;
-			}
-			previousCenterPoint = currentCenterPoint;
-			return result;
+			return StrategyState.Rotate;
+
+
 		}
 
-		private void RotateVehicles(IEnumerable<VehicleWrapper> vehicles, World world, Game game, Point2D currentCenterPoint, VehicleType type)
+		private void DoWork(Player me, World world)
 		{
-			var selectedVehicles = vehicles.Where(v => v.Type == type).ToList();
-			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type), world.TickIndex);
-			CommandManager.EnqueueCommand(new RotateCommand(selectedVehicles, currentCenterPoint, GetRotationAngle(game), true), world.TickIndex);
-		}
+			var myVehicleIds = VehicleRegistry.MyVehicleIds(me);
+			var vehicles = VehicleRegistry.GetVehiclesByIds(myVehicleIds);
+			var width = vehicles.Select(v => v.X).Max() - vehicles.Select(v => v.X).Min();
+			var height = vehicles.Select(v => v.Y).Max() - vehicles.Select(v => v.Y).Min();
+			var rotationAngle = width > height
+				? -45.ToRadians()
+				: 45.ToRadians();
 
-		private static double GetRotationAngle(Game game)
-		{
-			unchecked
-			{
-				var randomSeed = (int) game.RandomSeed;
-				var random = new Random(randomSeed);
-				var angle = random.Next(10) - 5;
-				var radians = angle.ToRadians();
-				return Math.PI / 10 + radians;
-			}
+			var army = new VehiclesGroup(myVehicleIds, VehicleRegistry, CommandManager);
+			army
+				.Select(world)
+				.RotateBy(rotationAngle, world);
+			command = CommandManager.PeekLastCommand() as RotateCommand;
 		}
 	}
 }

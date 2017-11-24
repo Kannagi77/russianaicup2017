@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
-using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
@@ -9,46 +9,46 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	{
 		private const ActionType ActionType = Model.ActionType.Move;
 		private bool isStarted;
-		private readonly IList<VehicleWrapper> vehicles;
+		private readonly IList<long> vehicleIds;
 		private readonly double x;
 		private readonly double y;
 		private readonly double maxSpeed;
 		private readonly bool canBeParallel;
 
-		public MoveCommand(IList<VehicleWrapper> vehicles, Point2D point, bool canBeParallel = false)
-			: this(vehicles, point.X, point.Y, canBeParallel)
+		public MoveCommand(IList<long> vehicleIds, Point2D point, bool canBeParallel = false)
+			: this(vehicleIds, point.X, point.Y, canBeParallel)
 		{
 		}
 
-		public MoveCommand(IList<VehicleWrapper> vehicles, double x, double y, bool canBeParallel = false)
+		public MoveCommand(IList<long> vehicleIds, double x, double y, bool canBeParallel = false)
 		{
-			this.vehicles = vehicles;
+			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
 			this.canBeParallel = canBeParallel;
 		}
 
-		public MoveCommand(IList<VehicleWrapper> vehicles, double x, double y, double maxSpeed, bool canBeParallel = false)
+		public MoveCommand(IList<long> vehicleIds, double x, double y, double maxSpeed, bool canBeParallel = false)
 		{
-			this.vehicles = vehicles;
+			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
 			this.maxSpeed = maxSpeed;
 			this.canBeParallel = canBeParallel;
 		}
 
-		public override void Commit(Move move)
+		public override void Commit(Move move, VehicleRegistry registry)
 		{
-			foreach (var vehicle in vehicles)
-			{
-				vehicle.IsIdle = false;
-			}
 			move.Action = ActionType;
 			move.X = x;
 			move.Y = y;
 			move.MaxSpeed = maxSpeed;
 
 			isStarted = true;
+
+#if DEBUG
+			Console.WriteLine($"{nameof(MoveCommand)}: ({x}, {y}), {nameof(maxSpeed)} = {maxSpeed}");
+#endif
 		}
 
 		public override bool IsStarted()
@@ -56,9 +56,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			return isStarted;
 		}
 
-		public override bool IsFinished()
+		public override bool IsFinished(VehicleRegistry registry)
 		{
-			return vehicles.All(v => v.IsIdle);
+			return vehicleIds.All(registry.IsVehicleIdle);
 		}
 
 		public override bool CanBeParallel()

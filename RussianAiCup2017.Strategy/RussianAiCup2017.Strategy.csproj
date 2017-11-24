@@ -64,6 +64,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml.Linq">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
@@ -74,7 +75,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Debug.cs" />
     <Compile Include="Model\ActionType.cs" />
     <Compile Include="Model\CircularUnit.cs" />
     <Compile Include="Model\Facility.cs" />
@@ -91,9 +91,20 @@
     <Compile Include="Model\WeatherType.cs" />
     <Compile Include="Model\World.cs" />
     <Compile Include="IStrategy.cs" />
+    <Compile Include="RewindClient.cs" />
+    <Compile Include="Strategy\Commands\AddToSelectionCommand.cs" />
     <Compile Include="Strategy\Commands\NukeCommand.cs" />
+    <Compile Include="Strategy\Commands\SelectVehiclesCommand.cs" />
     <Compile Include="Strategy\Helpers\AngleHelper.cs" />
+    <Compile Include="Strategy\Helpers\FormationHelper.cs" />
+    <Compile Include="Strategy\MagicConstants.cs" />
     <Compile Include="Strategy\Moves\AttackMove.cs" />
+    <Compile Include="Strategy\Moves\CornerFormationMove.cs" />
+    <Compile Include="Strategy\Moves\DiagonalFormationMove.cs" />
+    <Compile Include="Strategy\Moves\FinishAirMove.cs" />
+    <Compile Include="Strategy\Moves\GappedFormationMove.cs" />
+    <Compile Include="Strategy\Moves\InitFormationMove.cs" />
+    <Compile Include="Strategy\Moves\FinishFormationMove.cs" />
     <Compile Include="Strategy\Moves\GatherMove.cs" />
     <Compile Include="Strategy\MoveSelector.cs" />
     <Compile Include="MyStrategy.cs" />
@@ -102,9 +113,10 @@
     <Compile Include="Runner.cs" />
     <Compile Include="Strategy\Moves\RotateMove.cs" />
     <Compile Include="Strategy\Moves\ScaleMove.cs" />
-    <Compile Include="Strategy\Moves\InitialPointMove.cs" />
     <Compile Include="Strategy\Moves\ShrinkMove.cs" />
     <Compile Include="Strategy\Moves\StrategyMove.cs" />
+    <Compile Include="Strategy\Moves\TwoOnOneLineFormationMove.cs" />
+    <Compile Include="Strategy\VehiclesGroup.cs" />
     <Compile Include="Strategy\StrategyState.cs" />
     <Compile Include="Strategy\Commands\Command.cs" />
     <Compile Include="Strategy\CommandManager.cs" />
@@ -114,8 +126,8 @@
     <Compile Include="Strategy\Commands\SelectCommand.cs" />
     <Compile Include="Strategy\Helpers\GeometryHelper.cs" />
     <Compile Include="Strategy\Point2D.cs" />
+    <Compile Include="Strategy\Vector2D.cs" />
     <Compile Include="Strategy\VehicleRegistry.cs" />
-    <Compile Include="Strategy\Wrappers\VehicleWrapper.cs" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.0">

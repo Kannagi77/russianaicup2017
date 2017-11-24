@@ -3,7 +3,6 @@ using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
-using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Wrappers;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 {
@@ -45,7 +44,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			return result;
 		}
 
-		private void ShrinkVehicles(IEnumerable<VehicleWrapper> vehicles, World world, Point2D currentCenterPoint, VehicleType type)
+		private void ShrinkVehicles(IEnumerable<Vehicle> vehicles, World world, Point2D currentCenterPoint, VehicleType type)
 		{
 			var selectedVehicles = vehicles.Where(v => v.Type == type).ToList();
 			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, type), world.TickIndex);
