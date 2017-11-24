@@ -55,7 +55,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var maxX = myVehicles.Max(v => v.X);
 			var minY = myVehicles.Min(v => v.Y);
 			var maxY = myVehicles.Max(v => v.Y);
-			const int threshold = 150;
+			const int threshold = 200;
 			return maxX - minX > threshold || maxY - minY > threshold;
 		}
 	}
