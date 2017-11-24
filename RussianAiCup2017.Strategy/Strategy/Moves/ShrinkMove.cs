@@ -37,7 +37,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			}
 			else
 			{
-				result = StrategyState.Rotate;
+				result = StrategyState.Attack;
 				started = false;
 			}
 			previousCenterPoint = currentCenterPoint;

@@ -25,7 +25,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			if (command != null && command.IsStarted() && command.IsFinished(VehicleRegistry))
 			{
 				command = null;
-				return StrategyState.Attack;
+				return StrategyState.Shrink;
 			}
 			return StrategyState.Rotate;
 

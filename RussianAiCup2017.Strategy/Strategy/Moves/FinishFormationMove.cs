@@ -29,7 +29,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			if (commands.Any() && commands.All(c => c.IsStarted()) && commands.All(c => c.IsFinished(VehicleRegistry)))
 			{
 				commands.Clear();
-				return StrategyState.Shrink;
+				return StrategyState.Rotate;
 			}
 			return StrategyState.FinishFormation;
 		}
