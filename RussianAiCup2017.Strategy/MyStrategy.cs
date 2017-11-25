@@ -13,6 +13,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 		public void Move(Player me, World world, Game game, Move move)
 		{
 			VehicleRegistry.Update(world, me, game);
+#if DEBUG
+			RewindClient.Instance.Message($"Commands queue size: {CommandManager.GetCurrentQueueSize()}; ");
+#endif
 			if (CommandManager.PlayCommandIfPossible(VehicleRegistry, me, move, world.TickIndex))
 				return;
 			currentState = moveSelector.MakeNextMove(currentState, world, me, game);

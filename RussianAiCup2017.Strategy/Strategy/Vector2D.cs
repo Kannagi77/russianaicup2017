@@ -147,9 +147,19 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return Math.Atan2(Y, X);
 		}
 
+		public double AngleTo(Vector2D v)
+		{
+			return Math.Atan2(v.Y - Y, v.X - X);
+		}
+
 		public bool NearlyEqual(Vector2D potentialIntersectionPoint, double epsilon)
 		{
 			return Math.Abs(X - potentialIntersectionPoint.X) < epsilon && Math.Abs(Y - potentialIntersectionPoint.Y) < epsilon;
+		}
+
+		public Vector2D Rotate(Point2D angle)
+		{
+			return Rotate(new Vector2D(angle.X, angle.Y));
 		}
 
 		public Vector2D Rotate(Vector2D angle)

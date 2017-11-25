@@ -8,20 +8,20 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	{
 		private const ActionType ActionType = Model.ActionType.Scale;
 		private bool isStarted;
-		private readonly IList<Vehicle> vehicles;
+		private IList<long> vehicleIds;
 		private readonly double x;
 		private readonly double y;
 		private readonly double factor;
 		private readonly bool canBeParallel;
 
-		public ScaleCommand(IList<Vehicle> vehicles, Point2D point, double factor, bool canBeParallel = false)
-			: this(vehicles, point.X, point.Y, factor, canBeParallel)
+		public ScaleCommand(IList<long> vehicleIds, Point2D point, double factor, bool canBeParallel = false)
+			: this(vehicleIds, point.X, point.Y, factor, canBeParallel)
 		{
 		}
 
-		public ScaleCommand(IList<Vehicle> vehicles, double x, double y, double factor, bool canBeParallel = false)
+		public ScaleCommand(IList<long> vehicleIds, double x, double y, double factor, bool canBeParallel = false)
 		{
-			this.vehicles = vehicles;
+			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
 			this.factor = factor;
@@ -45,7 +45,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 
 		public override bool IsFinished(VehicleRegistry registry)
 		{
-			return vehicles.All(registry.IsVehicleIdle);
+			vehicleIds = registry.FilterDeadVehicles(vehicleIds);
+			return vehicleIds.All(registry.IsVehicleIdle);
 		}
 
 		public override bool CanBeParallel()

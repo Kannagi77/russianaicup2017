@@ -83,5 +83,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		public bool IsVehicleIdle(Vehicle vehicle) => idleVehicleIds.Contains(vehicle.Id);
 		public bool IsVehicleIdle(long vehicleId) => idleVehicleIds.Contains(vehicleId);
 		public void ForceUnidleVehicle(Vehicle vehicle) => idleVehicleIds.Remove(vehicle.Id);
+
+		public IList<long> FilterDeadVehicles(IEnumerable<long> vehicleIds)
+		{
+			return vehicleIds.Where(id => vehiclesByIds.ContainsKey(id)).ToList();
+		}
 	}
 }

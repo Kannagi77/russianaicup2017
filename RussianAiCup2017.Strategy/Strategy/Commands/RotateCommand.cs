@@ -8,7 +8,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	{
 		private const ActionType ActionType = Model.ActionType.Rotate;
 		private bool isStarted;
-		private readonly IList<long> vehicleIds;
+		private IList<long> vehicleIds;
 		private readonly double x;
 		private readonly double y;
 		private readonly double angle;
@@ -45,6 +45,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 
 		public override bool IsFinished(VehicleRegistry registry)
 		{
+			vehicleIds = registry.FilterDeadVehicles(vehicleIds);
 			return vehicleIds.All(registry.IsVehicleIdle);
 		}
 

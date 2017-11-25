@@ -28,8 +28,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				return StrategyState.Shrink;
 			}
 			return StrategyState.Rotate;
-
-
 		}
 
 		private void DoWork(Player me, World world)

@@ -1,4 +1,5 @@
-﻿using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
+﻿using System.Drawing;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
@@ -25,6 +26,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			move.Y = y;
 
 			isStarted = true;
+#if DEBUG
+			RewindClient.Instance.Circle(x, y, 50, Color.LawnGreen);
+#endif
 		}
 
 		public override bool IsStarted()

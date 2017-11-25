@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 
@@ -9,7 +8,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	{
 		private const ActionType ActionType = Model.ActionType.Move;
 		private bool isStarted;
-		private readonly IList<long> vehicleIds;
+		private IList<long> vehicleIds;
 		private readonly double x;
 		private readonly double y;
 		private readonly double maxSpeed;
@@ -45,10 +44,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			move.MaxSpeed = maxSpeed;
 
 			isStarted = true;
-
-#if DEBUG
-			Console.WriteLine($"{nameof(MoveCommand)}: ({x}, {y}), {nameof(maxSpeed)} = {maxSpeed}");
-#endif
 		}
 
 		public override bool IsStarted()
@@ -58,6 +53,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 
 		public override bool IsFinished(VehicleRegistry registry)
 		{
+			vehicleIds = registry.FilterDeadVehicles(vehicleIds);
 			return vehicleIds.All(registry.IsVehicleIdle);
 		}
 

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
@@ -61,15 +60,21 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return new VehiclesGroup(VehicleIds.Concat(anotherVehicleIds).ToList(), registry, commandManager);
 		}
 
-		public VehiclesGroup RotateTo(Point2D rotationDirection, World world)
-		{
-			//todo
-			return RotateBy(Double.Epsilon, world);
-		}
-
 		public VehiclesGroup RotateBy(double angle, World world)
 		{
 			commandManager.EnqueueCommand(new RotateCommand(VehicleIds, Center, angle), world.TickIndex);
+			return this;
+		}
+
+		public VehiclesGroup Nuke(long gunnerId, Vehicle target, World world)
+		{
+			commandManager.EnqueueCommand(new NukeCommand(gunnerId, target.X, target.Y), world.TickIndex);
+			return this;
+		}
+
+		public VehiclesGroup Scale(double factor, World world)
+		{
+			commandManager.EnqueueCommand(new ScaleCommand(VehicleIds, Center, factor, true), world.TickIndex);
 			return this;
 		}
 	}

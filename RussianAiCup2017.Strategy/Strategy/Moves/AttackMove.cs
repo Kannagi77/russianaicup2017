@@ -9,7 +9,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 	public class AttackMove : StrategyMove
 	{
 		public override StrategyState State => StrategyState.Attack;
-		private bool started;
+		private readonly List<Command> commands = new List<Command>();
 
 		public AttackMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
 			: base(commandManager, vehicleRegistry)
@@ -18,39 +18,40 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		public override StrategyState Perform(World world, Player me, Game game)
 		{
-			var myVehicles = VehicleRegistry.MyVehicles(me);
-			var myVehicleIds = VehicleRegistry.MyVehicleIds(me);
-			var myArmyCenter = myVehicles.GetCenterPoint();
-			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
-			if (!started)
-			{
-				var enemiesCenterPoint = enemyVehicles.GetCenterPoint();
-				CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
-				CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds,
-					enemiesCenterPoint.X - myArmyCenter.X, enemiesCenterPoint.Y - myArmyCenter.Y, 0.2), world.TickIndex);
-				started = true;
-			}
-			var isMyArmyStretched = IsMyArmyStretched(myVehicles);
-			var minimumDistanceToEnemy = enemyVehicles.GetMinimumDistanceTo(myArmyCenter);
-			if (!isMyArmyStretched && (minimumDistanceToEnemy > 200 || minimumDistanceToEnemy < 100))
-			{
-				var closestToEnemy = myVehicles.GetClosest(enemyVehicles.GetCenterPoint());
-				var nukeTarget = enemyVehicles.GetClosestAtMinimumRange(closestToEnemy, game.TacticalNuclearStrikeRadius);
-				if (nukeTarget != null)
-				{
-					CommandManager.EnqueueCommand(new NukeCommand(closestToEnemy.Id, nukeTarget.X, nukeTarget.Y), world.TickIndex);
-				}
+			if (commands.Any(c => !c.IsFinished(VehicleRegistry)))
 				return StrategyState.Attack;
-			}
+
+			commands.Clear();
 			CommandManager.ClearCommandsQueue();
-			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height), world.TickIndex);
-			CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds, 0, 0), world.TickIndex);
-			started = false;
-			return StrategyState.Shrink;
+			var myVehicleIds = VehicleRegistry.MyVehicleIds(me);
+			var myArmy = new VehiclesGroup(myVehicleIds, VehicleRegistry, CommandManager);
+			var myVehicles = VehicleRegistry.GetVehiclesByIds(myVehicleIds).ToList();
+			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
+			var enemiesCenter = enemyVehicles.GetCenterPoint();
+			var direction = myArmy.Center.To(enemiesCenter);
+			myArmy
+				.Select(world)
+				.MoveByVector(direction.mul(0.1), world, game.TankSpeed * game.ForestTerrainSpeedFactor);
+			commands.Add(CommandManager.PeekLastCommand());
+
+			var closestToEnemy = myVehicles.GetClosest(enemyVehicles.GetCenterPoint());
+			var nukeTarget = enemyVehicles.GetClosestAtMinimumRange(closestToEnemy, game.TacticalNuclearStrikeRadius * 0.9);
+			if (me.RemainingNuclearStrikeCooldownTicks == 0 && nukeTarget != null && closestToEnemy.GetDistanceTo(nukeTarget) <= game.TacticalNuclearStrikeRadius)
+			{
+				myArmy
+					.Nuke(closestToEnemy.Id, nukeTarget, world);
+				commands.Add(CommandManager.PeekLastCommand());
+				myArmy
+					.Select(world)
+					.MoveByVector(0, 0);
+				return StrategyState.Shrink;
+			}
+			return StrategyState.Attack;
 		}
 
 		private static bool IsMyArmyStretched(IReadOnlyCollection<Vehicle> myVehicles)
 		{
+			return false;
 			var minX = myVehicles.Min(v => v.X);
 			var maxX = myVehicles.Max(v => v.X);
 			var minY = myVehicles.Min(v => v.Y);
