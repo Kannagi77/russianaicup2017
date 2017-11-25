@@ -31,7 +31,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var direction = myArmy.Center.To(enemiesCenter);
 			myArmy
 				.Select(world)
-				.MoveByVector(direction.mul(0.1), world, game.TankSpeed * game.ForestTerrainSpeedFactor);
+				.MoveByVector(direction.Mul(0.1), world, game.TankSpeed * game.ForestTerrainSpeedFactor);
 			commands.Add(CommandManager.PeekLastCommand());
 
 			var closestToEnemy = myVehicles.GetClosest(enemyVehicles.GetCenterPoint());
@@ -47,17 +47,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				return StrategyState.Shrink;
 			}
 			return StrategyState.Attack;
-		}
-
-		private static bool IsMyArmyStretched(IReadOnlyCollection<Vehicle> myVehicles)
-		{
-			return false;
-			var minX = myVehicles.Min(v => v.X);
-			var maxX = myVehicles.Max(v => v.X);
-			var minY = myVehicles.Min(v => v.Y);
-			var maxY = myVehicles.Max(v => v.Y);
-			const int threshold = 450;
-			return maxX - minX > threshold || maxY - minY > threshold;
 		}
 	}
 }

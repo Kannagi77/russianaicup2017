@@ -28,37 +28,37 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 
 		private const int DefaultLayer = 3;
 
-		private static RewindClient _instance;
+		private static RewindClient instance;
 
-		private readonly TcpClient _client;
+		private readonly TcpClient client;
 
-		private readonly BinaryWriter _writer;
+		private readonly BinaryWriter writer;
 
 		private RewindClient(string host, int port)
 		{
-			_client = new TcpClient(host, port)
+			client = new TcpClient(host, port)
 			{
 				SendBufferSize = BufferSizeBytes,
 				ReceiveBufferSize = BufferSizeBytes,
 				NoDelay = true
 			};
 
-			_writer = new BinaryWriter(_client.GetStream());
+			writer = new BinaryWriter(client.GetStream());
 
-			_client = new TcpClient(host, port);
+			client = new TcpClient(host, port);
 
 			CultureInfo newCInfo = (CultureInfo) Thread.CurrentThread.CurrentCulture.Clone();
 			newCInfo.NumberFormat.NumberDecimalSeparator = ".";
 			Thread.CurrentThread.CurrentCulture = newCInfo;
 		}
 
-		public static RewindClient Instance => _instance ?? (_instance = new RewindClient("127.0.0.1", 9111));
+		public static RewindClient Instance => instance ?? (instance = new RewindClient("127.0.0.1", 9111));
 
 		public void Dispose()
 		{
-			_client?.Dispose();
-			_writer?.Dispose();
-			_instance?.Dispose();
+			client?.Dispose();
+			writer?.Dispose();
+			instance?.Dispose();
 		}
 
 		public void End()
@@ -115,12 +115,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 		private void SendCommand(string command)
 		{
 			WriteString(command);
-			_writer.Flush();
+			writer.Flush();
 		}
 
 		private void WriteInt(int value)
 		{
-			_writer.Write(value);
+			writer.Write(value);
 		}
 
 		private void WriteString(string value)
@@ -132,7 +132,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			}
 
 			var bytes = Encoding.UTF8.GetBytes(value);
-			_writer.Write(bytes, 0, bytes.Length);
+			writer.Write(bytes, 0, bytes.Length);
 		}
 	}
 

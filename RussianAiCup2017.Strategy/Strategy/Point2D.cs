@@ -5,7 +5,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 {
 	public struct Point2D
 	{
-		private const double Eps = 0.1;
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			return obj is Point2D d && Equals(d);
+		}
 
 		public Point2D(double x, double y)
 		{
@@ -14,11 +18,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		}
 
 		public double X { get; }
+
 		public double Y { get; }
 
 		public static bool operator ==(Point2D p1, Point2D p2)
 		{
-			return Math.Abs(p1.X - p2.X) < Eps && Math.Abs(p1.Y - p2.Y) < Eps;
+			return Math.Abs(p1.X - p2.X) < MagicConstants.Eps && Math.Abs(p1.Y - p2.Y) < MagicConstants.Eps;
 		}
 
 		public static bool operator !=(Point2D p1, Point2D p2)
@@ -39,6 +44,19 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		public override string ToString()
 		{
 			return $"({nameof(X)} = {X}, {nameof(Y)} = {Y})";
+		}
+
+		public override int GetHashCode()
+		{
+			unchecked
+			{
+				return (X.GetHashCode() * 397) ^ Y.GetHashCode();
+			}
+		}
+
+		public bool Equals(Point2D other)
+		{
+			return X.Equals(other.X) && Y.Equals(other.Y);
 		}
 	}
 }

@@ -36,80 +36,80 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return new Vector2D(this);
 		}
 
-		public Vector2D add(Vector2D v)
+		public Vector2D Add(Vector2D v)
 		{
 			X += v.X;
 			Y += v.Y;
 			return this;
 		}
 
-		public Vector2D sub(Vector2D v)
+		public Vector2D Sub(Vector2D v)
 		{
 			X -= v.X;
 			Y -= v.Y;
 			return this;
 		}
 
-		public Vector2D add(double dx, double dy)
+		public Vector2D Add(double dx, double dy)
 		{
 			X += dx;
 			Y += dy;
 			return this;
 		}
 
-		public Vector2D sub(double dx, double dy)
+		public Vector2D Sub(double dx, double dy)
 		{
 			X -= dx;
 			Y -= dy;
 			return this;
 		}
 
-		public Vector2D mul(double f)
+		public Vector2D Mul(double f)
 		{
 			X *= f;
 			Y *= f;
 			return this;
 		}
 
-		public double length()
+		public double Length()
 		{
 			return Math.Sqrt(X * X + Y * Y);
 		}
 
-		public double distance(Vector2D v)
+		public double Distance(Vector2D v)
 		{
-			return Math.Sqrt(squareDistance(v));
+			return Math.Sqrt(SquareDistance(v));
 		}
 
-		public double squareDistance(Vector2D v)
+		public double SquareDistance(Vector2D v)
 		{
 			double tx = X - v.X;
 			double ty = Y - v.Y;
 			return tx * tx + ty * ty;
 		}
 
-		public double squareDistance(double x, double y)
+		public double SquareDistance(double x, double y)
 		{
 			double tx = X - x;
 			double ty = Y - y;
 			return tx * tx + ty * ty;
 		}
 
-		public double squareLength()
+		public double SquareLength()
 		{
 			return X * X + Y * Y;
 		}
 
-		public Vector2D reverse()
+		public Vector2D Reverse()
 		{
 			X = -X;
 			Y = -Y;
 			return this;
 		}
 
-		public Vector2D normalize()
+		public Vector2D Normalize()
 		{
-			var length = this.length();
+			var length = Length();
 			if (Math.Abs(length) < double.Epsilon)
 			{
 				throw new Exception("Can\'t set angle of zero-width vector.");
@@ -119,14 +119,14 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return this;
 		}
 
-		public Vector2D length(double length)
+		public Vector2D Length(double length)
 		{
-			var currentLength = this.length();
+			var currentLength = Length();
 			if (Math.Abs(currentLength) < double.Epsilon)
 			{
 				throw new Exception("Can\'t resize zero-width vector.");
 			}
-			return mul(length / currentLength);
+			return Mul(length / currentLength);
 		}
 
 		public Vector2D Perpendicular()
