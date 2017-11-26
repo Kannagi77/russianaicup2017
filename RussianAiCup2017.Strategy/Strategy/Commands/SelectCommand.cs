@@ -59,7 +59,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			return isStarted;
 		}
 
-		public override bool IsFinished(VehicleRegistry registry)
+		public override bool IsFinished(int worldTick, VehicleRegistry registry)
 		{
 			return true;
 		}

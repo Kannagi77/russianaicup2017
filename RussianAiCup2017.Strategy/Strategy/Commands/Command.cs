@@ -6,7 +6,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 	{
 		public abstract void Commit(Move move, VehicleRegistry registry);
 		public abstract bool IsStarted();
-		public abstract bool IsFinished(VehicleRegistry registry);
+		public abstract bool IsFinished(int worldTick, VehicleRegistry registry);
 		public abstract bool CanBeParallel();
 
 		public virtual bool ForcePlayNextCommand => false;

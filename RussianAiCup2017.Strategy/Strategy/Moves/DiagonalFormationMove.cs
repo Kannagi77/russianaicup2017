@@ -24,7 +24,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				DoWork(me, world);
 			}
 
-			if (commands.Any() && commands.All(c => c.IsStarted()) && commands.All(c => c.IsFinished(VehicleRegistry)))
+			if (commands.Any() && commands.All(c => c.IsStarted()) && commands.All(c => c.IsFinished(world.TickIndex, VehicleRegistry)))
 			{
 				commands.Clear();
 				return StrategyState.InitFormation;

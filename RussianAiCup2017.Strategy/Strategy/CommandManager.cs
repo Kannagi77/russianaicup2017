@@ -53,7 +53,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;
 				return true;
 			}
-			if (currentCommand.CanBeParallel() || currentCommand.IsFinished(registry) ||
+			if (currentCommand.CanBeParallel() || currentCommand.IsFinished(worldTick, registry) ||
 			    worldTick - currentCommandStartTick > CommandTimeout)
 			{
 				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;

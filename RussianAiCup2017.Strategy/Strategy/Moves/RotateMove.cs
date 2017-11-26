@@ -22,7 +22,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				DoWork(me, world);
 			}
 
-			if (command != null && command.IsStarted() && command.IsFinished(VehicleRegistry))
+			if (command != null && command.IsStarted() && command.IsFinished(world.TickIndex, VehicleRegistry))
 			{
 				command = null;
 				return StrategyState.Shrink;

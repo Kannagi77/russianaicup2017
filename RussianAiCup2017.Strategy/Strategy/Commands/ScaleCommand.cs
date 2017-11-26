@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 
@@ -13,19 +14,21 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly double y;
 		private readonly double factor;
 		private readonly bool canBeParallel;
+		private Func<int, bool> isFinished;
 
-		public ScaleCommand(IList<long> vehicleIds, Point2D point, double factor, bool canBeParallel = false)
-			: this(vehicleIds, point.X, point.Y, factor, canBeParallel)
+		public ScaleCommand(IList<long> vehicleIds, Point2D point, double factor, bool canBeParallel = false, Func<int, bool> isFinished = null)
+			: this(vehicleIds, point.X, point.Y, factor, canBeParallel, isFinished)
 		{
 		}
 
-		public ScaleCommand(IList<long> vehicleIds, double x, double y, double factor, bool canBeParallel = false)
+		public ScaleCommand(IList<long> vehicleIds, double x, double y, double factor, bool canBeParallel = false, Func<int, bool> isFinished = null)
 		{
 			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
 			this.factor = factor;
 			this.canBeParallel = canBeParallel;
+			this.isFinished = isFinished;
 		}
 
 		public override void Commit(Move move, VehicleRegistry registry)
@@ -43,8 +46,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			return isStarted;
 		}
 
-		public override bool IsFinished(VehicleRegistry registry)
+		public override bool IsFinished(int worldTick, VehicleRegistry registry)
 		{
+			if (isFinished != null)
+				return isFinished(worldTick);
 			vehicleIds = registry.FilterDeadVehicles(vehicleIds);
 			return vehicleIds.All(registry.IsVehicleIdle);
 		}

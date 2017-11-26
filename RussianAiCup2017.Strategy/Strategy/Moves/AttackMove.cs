@@ -19,12 +19,20 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		public override StrategyState Perform(World world, Player me, Game game)
 		{
-			if (commands.Any(c => !c.IsFinished(VehicleRegistry)))
+			var myVehicleIds = VehicleRegistry.MyVehicleIds(me);
+
+			if (IsNukeAlert(world.GetOpponentPlayer()))
+			{
+				PreventNuke(myVehicleIds, world, game);
+				return StrategyState.Attack;
+			}
+
+			if (commands.Any(c => !c.IsFinished(world.TickIndex, VehicleRegistry)))
 				return StrategyState.Attack;
 
 			commands.Clear();
 			CommandManager.ClearCommandsQueue();
-			var myVehicleIds = VehicleRegistry.MyVehicleIds(me);
+
 			var myArmy = new VehiclesGroup(myVehicleIds, VehicleRegistry, CommandManager);
 			var myVehicles = VehicleRegistry.GetVehiclesByIds(myVehicleIds).ToList();
 			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
@@ -52,6 +60,31 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				return StrategyState.Shrink;
 			}
 			return StrategyState.Attack;
+		}
+
+		private static bool IsNukeAlert(Player opponentPlayer)
+		{
+			return opponentPlayer.NextNuclearStrikeX > 0 && opponentPlayer.NextNuclearStrikeY > 0;
+		}
+
+		private void PreventNuke(IList<long> myVehicleIds, World world, Game game)
+		{
+			var opponentPlayer = world.GetOpponentPlayer();
+			CommandManager.EnqueueCommand(new SelectCommand(opponentPlayer.NextNuclearStrikeX - game.TacticalNuclearStrikeRadius,
+				opponentPlayer.NextNuclearStrikeY - game.TacticalNuclearStrikeRadius,
+				opponentPlayer.NextNuclearStrikeX + game.TacticalNuclearStrikeRadius,
+				opponentPlayer.NextNuclearStrikeY + game.TacticalNuclearStrikeRadius,
+				true), world.TickIndex);
+			var scaleCommand = new ScaleCommand(myVehicleIds,
+				opponentPlayer.NextNuclearStrikeX,
+				opponentPlayer.NextNuclearStrikeY,
+				10.0,
+				isFinished: tick => tick - world.TickIndex > game.TacticalNuclearStrikeDelay);
+			CommandManager.EnqueueCommand(scaleCommand, world.TickIndex);
+			var unscaleCommand = new ScaleCommand(myVehicleIds, opponentPlayer.NextNuclearStrikeX, opponentPlayer.NextNuclearStrikeY, 0.1);
+			CommandManager.EnqueueCommand(unscaleCommand, world.TickIndex);
+			commands.Add(scaleCommand);
+			commands.Add(unscaleCommand);
 		}
 
 		//note: uses poorly implemented DBSCAN algorithm
