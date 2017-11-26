@@ -5,12 +5,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 {
 	public struct Point2D
 	{
-		public override bool Equals(object obj)
-		{
-			if (ReferenceEquals(null, obj)) return false;
-			return obj is Point2D d && Equals(d);
-		}
-
 		public Point2D(double x, double y)
 		{
 			X = x;
@@ -54,9 +48,15 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			}
 		}
 
-		public bool Equals(Point2D other)
+		private bool Equals(Point2D other)
 		{
 			return X.Equals(other.X) && Y.Equals(other.Y);
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (ReferenceEquals(null, obj)) return false;
+			return obj is Point2D && Equals((Point2D) obj);
 		}
 	}
 }
