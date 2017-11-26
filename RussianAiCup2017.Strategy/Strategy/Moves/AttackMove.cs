@@ -75,6 +75,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				opponentPlayer.NextNuclearStrikeX + game.TacticalNuclearStrikeRadius,
 				opponentPlayer.NextNuclearStrikeY + game.TacticalNuclearStrikeRadius,
 				true), world.TickIndex);
+			CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds, 0, 0), world.TickIndex);
 			var scaleCommand = new ScaleCommand(myVehicleIds,
 				opponentPlayer.NextNuclearStrikeX,
 				opponentPlayer.NextNuclearStrikeY,
