@@ -70,12 +70,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		private void PreventNuke(IList<long> myVehicleIds, World world, Game game)
 		{
 			var opponentPlayer = world.GetOpponentPlayer();
+			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, true), world.TickIndex);
+			CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds, 0, 0), world.TickIndex);
 			CommandManager.EnqueueCommand(new SelectCommand(opponentPlayer.NextNuclearStrikeX - game.TacticalNuclearStrikeRadius,
 				opponentPlayer.NextNuclearStrikeY - game.TacticalNuclearStrikeRadius,
 				opponentPlayer.NextNuclearStrikeX + game.TacticalNuclearStrikeRadius,
 				opponentPlayer.NextNuclearStrikeY + game.TacticalNuclearStrikeRadius,
 				true), world.TickIndex);
-			CommandManager.EnqueueCommand(new MoveCommand(myVehicleIds, 0, 0), world.TickIndex);
 			var scaleCommand = new ScaleCommand(myVehicleIds,
 				opponentPlayer.NextNuclearStrikeX,
 				opponentPlayer.NextNuclearStrikeY,
