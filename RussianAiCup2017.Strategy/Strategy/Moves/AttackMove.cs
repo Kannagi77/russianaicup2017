@@ -90,7 +90,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		}
 
 		//note: uses poorly implemented DBSCAN algorithm
-		private static IEnumerable<Vehicle> NextEnemyGroup(Point2D myArmyCenter, List<Vehicle> enemyVehicles)
+		private static IEnumerable<Vehicle> NextEnemyGroup(Point2D myArmyCenter, IReadOnlyCollection<Vehicle> enemyVehicles)
 		{
 			const double radius = 15;
 			const int minimumClusterSize = 3;
@@ -100,6 +100,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 			foreach (var currentVehicle in enemyVehicles)
 			{
+				if (!unvisitedVehicles.Contains(currentVehicle.Id))
+					continue;
 				var currentCluster = enemyVehicles
 					.Where(v => unvisitedVehicles.Contains(v.Id) && v.GetDistanceTo(currentVehicle) < radius)
 					.ToList();
@@ -108,14 +110,14 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 					continue;
 				}
 
-				foreach (var id in currentCluster.Select(v => v.Id).Where(id => unvisitedVehicles.Contains(id)))
+				foreach (var id in currentCluster.Select(v => v.Id))
 				{
 					unvisitedVehicles.Remove(id);
 				}
 
 				do
 				{
-					var newVehicles = FindNearbyVehicles(currentCluster, enemyVehicles, radius, minimumClusterSize);
+					var newVehicles = FindNearbyVehicles(currentCluster, enemyVehicles, unvisitedVehicles, radius, minimumClusterSize);
 					if (newVehicles.Count == 0)
 						break;
 					foreach (var newVehicle in newVehicles)
@@ -144,6 +146,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 		private static List<Vehicle> FindNearbyVehicles(ICollection<Vehicle> currentCluster,
 			IReadOnlyCollection<Vehicle> enemyVehicles,
+			ICollection<long> unvisitedVehicles,
 			double radius,
 			int minimumClusterSize)
 		{
@@ -151,7 +154,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			foreach (var vehicle in currentCluster)
 			{
 				var newNearbyVehicles = enemyVehicles
-					.Where(v => !currentCluster.Contains(v) && v.GetDistanceTo(vehicle) < radius)
+					.Where(v => unvisitedVehicles.Contains(v.Id) && v.GetDistanceTo(vehicle) < radius)
 					.ToList();
 				if (newNearbyVehicles.Count < minimumClusterSize)
 				{

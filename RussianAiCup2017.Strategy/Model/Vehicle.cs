@@ -111,5 +111,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model {
                 return groups;
             }
         }
-    }
+
+	    public override string ToString()
+	    {
+		    return $"Id = {Id}, Type = {Type}";
+	    }
+	}
 }
