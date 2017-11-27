@@ -100,6 +100,7 @@
     <Compile Include="Strategy\MagicConstants.cs" />
     <Compile Include="Strategy\Moves\AttackMove.cs" />
     <Compile Include="Strategy\Moves\CornerFormationMove.cs" />
+    <Compile Include="Strategy\Dbscan.cs" />
     <Compile Include="Strategy\Moves\DiagonalFormationMove.cs" />
     <Compile Include="Strategy\Moves\FinishAirMove.cs" />
     <Compile Include="Strategy\Moves\GappedFormationMove.cs" />
