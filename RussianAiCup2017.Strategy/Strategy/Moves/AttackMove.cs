@@ -52,7 +52,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			var direction = myArmy.Center.To(nextTarget);
 			myArmy
 				.Select(world)
-				.MoveByVector(direction.Mul(0.1), world, game.TankSpeed * game.ForestTerrainSpeedFactor);
+				.MoveByVector(direction.Length() > 20
+						? direction.Mul(0.1)
+						: direction,
+					world,
+					game.TankSpeed * game.ForestTerrainSpeedFactor);
 			commands.Add(CommandManager.PeekLastCommand());
 			return StrategyState.Attack;
 		}
