@@ -58,14 +58,14 @@ namespace RussianAiCup2017.Tests
 
 		private static readonly Random Rnd = new Random();
 		[Test]
-		[TestCase(500, 15, 3, 10)]
-		[TestCase(500, 50, 3, 10)]
-		[TestCase(500, 100, 10, 10)]
-		[TestCase(1000, 15, 3, 10)]
-		[TestCase(1000, 150, 3, 10)]
-		[TestCase(1000, 150, 30, 10)]
-		[TestCase(1000, 400, 50, 10)]
-		public void BenchmarkTest(int unitsCount, double radius, int minimumClusterSize, int runsCount)
+		[TestCase( 500,  15,  3, 10,  35)]
+		[TestCase( 500,  50,  3, 10,  55)]
+		[TestCase( 500, 100, 10, 10,  80)]
+		[TestCase(1000,  15,  3, 10,  65)]
+		[TestCase(1000, 150,  3, 10, 833)]
+		[TestCase(1000, 150, 30, 10, 855)]
+		[TestCase(1000, 400, 50, 10, 725)]
+		public void BenchmarkTest(int unitsCount, double radius, int minimumClusterSize, int runsCount, double threshold)
 		{
 			var stopwatch = new Stopwatch();
 			for (var i = 0; i < runsCount; i++)
@@ -76,7 +76,9 @@ namespace RussianAiCup2017.Tests
 				stopwatch.Stop();
 				Console.WriteLine($"Clusters found: {clusters.Count}, current time spent: {stopwatch.Elapsed}");
 			}
-			Console.WriteLine($"Avarage: {TimeSpan.FromMilliseconds((double) stopwatch.ElapsedMilliseconds / runsCount)}");
+			var average = TimeSpan.FromMilliseconds((double)stopwatch.ElapsedMilliseconds / runsCount);
+			Console.WriteLine($"Avarage: {average}");
+			Assert.Less(average, TimeSpan.FromMilliseconds(threshold));
 		}
 
 		private static List<Vehicle> GenerateVehicles(int count)
