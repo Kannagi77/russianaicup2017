@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
@@ -94,8 +96,15 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			const double radius = 15;
 			const int minimumClusterSize = 3;
 
+#if DEBUG
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+#endif
 			var clusters = Dbscan.Cluster(enemyVehicles, radius, minimumClusterSize);
 #if DEBUG
+			stopwatch.Stop();
+			RewindClient.Instance.Message($"Clustering time: {stopwatch.Elapsed}");
+			Console.WriteLine($"Clustering time: {stopwatch.Elapsed}");
 			foreach (var cluster in clusters)
 			{
 				var x1 = cluster.Select(v => v.X).Min();
