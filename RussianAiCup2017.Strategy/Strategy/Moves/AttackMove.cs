@@ -77,6 +77,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				return false;
 			}
 			var enemyVehicles = VehicleRegistry.GetVehiclesByIds(cachedTargetGroup);
+			if (!enemyVehicles.Any())
+			{
+				return false;
+			}
 			if (myArmy.Center.GetDistanceTo(enemyVehicles.GetCenterPoint()) > 2 * game.TacticalNuclearStrikeRadius)
 			{
 				return false;
