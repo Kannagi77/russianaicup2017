@@ -8,6 +8,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 {
 	public class VehicleRegistry
 	{
+		private const int CellSize = 32;
 		private readonly Dictionary<long, Vehicle> vehiclesByIds = new Dictionary<long, Vehicle>();
 		private readonly HashSet<long> idleVehicleIds = new HashSet<long>();
 
@@ -87,6 +88,65 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		public IList<long> FilterDeadVehicles(IEnumerable<long> vehicleIds)
 		{
 			return vehicleIds.Where(id => vehiclesByIds.ContainsKey(id)).ToList();
+		}
+
+		public double GetVision(long id, World world, Game game)
+		{
+			var vehicle = GetVehicleById(id);
+			return vehicle.VisionRange * GetVisionCoefficient(vehicle, world, game);
+		}
+
+		private double GetVisionCoefficient(Vehicle vehicle, World world, Game game)
+		{
+			var x = (int) vehicle.X / CellSize;
+			var y = (int) vehicle.Y / CellSize;
+			var weatherType = world.WeatherByCellXY[x][y];
+			var terrainType = world.TerrainByCellXY[x][y];
+			switch (vehicle.Type)
+			{
+				case VehicleType.Arrv:
+					return GetVisionCoefficient(terrainType, game);
+				case VehicleType.Fighter:
+					return GetVisionCoefficient(weatherType, game);
+				case VehicleType.Helicopter:
+					return GetVisionCoefficient(weatherType, game);
+				case VehicleType.Ifv:
+					return GetVisionCoefficient(terrainType, game);
+				case VehicleType.Tank:
+					return GetVisionCoefficient(terrainType, game);
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+		}
+
+		private double GetVisionCoefficient(WeatherType weatherType, Game game)
+		{
+			switch (weatherType)
+			{
+				case WeatherType.Clear:
+					return game.ClearWeatherVisionFactor;
+				case WeatherType.Cloud:
+					return game.CloudWeatherVisionFactor;
+				case WeatherType.Rain:
+					return game.RainWeatherVisionFactor;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(weatherType), weatherType, null);
+			}
+		}
+
+		private double GetVisionCoefficient(TerrainType terrainType, Game game)
+		{
+			switch (terrainType)
+			{
+				case TerrainType.Plain:
+					return game.PlainTerrainVisionFactor;
+				case TerrainType.Swamp:
+					return game.SwampTerrainVisionFactor;
+				case TerrainType.Forest:
+					return game.ForestTerrainVisionFactor;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(terrainType), terrainType, null);
+			}
 		}
 	}
 }

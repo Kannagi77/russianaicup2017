@@ -17,6 +17,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		private const double DbscanRadius = 15;
 		private const int DbscanMinimumClusterSize = 3;
 		private Point2D cachedTarget;
+		private List<long> cachedTargetGroup;
 		private int lastClusteringTick;
 
 		public AttackMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
@@ -37,7 +38,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				return StrategyState.Attack;
 			}
 
-			if (TryNuke(myArmy, myVehicles, enemyVehicles, me, game, world))
+			if (TryNuke(myArmy, myVehicles, me, game, world))
 			{
 				return StrategyState.Shrink;
 			}
@@ -62,27 +63,87 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		}
 
 		private bool TryNuke(VehiclesGroup myArmy,
-			IEnumerable<Vehicle> myVehicles,
-			IReadOnlyCollection<Vehicle> enemyVehicles,
+			IReadOnlyCollection<Vehicle> myVehicles,
 			Player me,
 			Game game,
 			World world)
 		{
-			var closestToEnemy = myVehicles.GetClosest(enemyVehicles.GetCenterPoint());
-			var nukeTarget = enemyVehicles.GetClosestAtMinimumRange(closestToEnemy, game.TacticalNuclearStrikeRadius * 0.9);
-			if (me.RemainingNuclearStrikeCooldownTicks != 0
-			    || nukeTarget == null
-			    || !(closestToEnemy.GetDistanceTo(nukeTarget) <= game.TacticalNuclearStrikeRadius))
+			if (me.RemainingNuclearStrikeCooldownTicks != 0)
+			{
+				return false;
+			}
+			if (cachedTargetGroup == null)
+			{
+				return false;
+			}
+			var enemyVehicles = VehicleRegistry.GetVehiclesByIds(cachedTargetGroup);
+			if (myArmy.Center.GetDistanceTo(enemyVehicles.GetCenterPoint()) > 2 * game.TacticalNuclearStrikeRadius)
+			{
+				return false;
+			}
+			var nukeTarget = GetNukeTarget(enemyVehicles, myVehicles, game);
+			if (nukeTarget == null)
+			{
+				return false;
+			}
+			var nukeGunner = GetNukeGunner(nukeTarget, myVehicles, world, game);
+			if (nukeGunner == null)
 			{
 				return false;
 			}
 			myArmy
-				.Nuke(closestToEnemy.Id, nukeTarget, world);
+				.Nuke(nukeGunner.Id, nukeTarget, world);
 			commands.Add(CommandManager.PeekLastCommand());
 			myArmy
 				.Select(world)
 				.MoveByVector(0, 0);
 			return true;
+		}
+
+		private static Vehicle GetNukeTarget(IReadOnlyList<Vehicle> enemyVehicles, IReadOnlyCollection<Vehicle> myVehicles, Game game)
+		{
+			var bestTarget = enemyVehicles.First();
+			var topDamage = 0.0;
+			for (var i = 1; i < enemyVehicles.Count; i++)
+			{
+				var currentTarget = enemyVehicles[i];
+				var currentDamage = 0.0;
+				foreach (var enemyVehicle in enemyVehicles
+					.Where(v => v.Id != currentTarget.Id))
+				{
+					currentDamage += GetDamage(currentTarget, enemyVehicle, game);
+				}
+				foreach (var myVehicle in myVehicles)
+				{
+					currentDamage -= GetDamage(currentTarget, myVehicle, game);
+				}
+
+				if (currentDamage > topDamage)
+				{
+					bestTarget = currentTarget;
+					topDamage = currentDamage;
+				}
+			}
+			return topDamage > 0
+				? bestTarget
+				: null;
+		}
+
+		private static double GetDamage(Unit currentTarget, Unit vehicle, Game game)
+		{
+			var distance = currentTarget.GetDistanceTo(vehicle);
+			var nukeRadius = game.TacticalNuclearStrikeRadius;
+			if (distance >= nukeRadius)
+				return 0;
+			return (nukeRadius - distance) / game.MaxTacticalNuclearStrikeDamage;
+		}
+
+		private Vehicle GetNukeGunner(Unit target, IEnumerable<Vehicle> myVehicles, World world, Game game)
+		{
+			return myVehicles
+				.Where(v => VehicleRegistry.GetVision(v.Id, world, game) >= v.GetDistanceTo(target))
+				.OrderBy(v => v.Durability)
+				.FirstOrDefault();
 		}
 
 		private static bool IsNukeAlert(Player opponentPlayer)
@@ -116,11 +177,17 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		{
 			if (world.TickIndex - lastClusteringTick > CacheTtl)
 			{
-				var nextTarget = NextEnemyGroup(myArmy.Center, enemyVehicles)?.GetCenterPoint()
-				                 ?? enemyVehicles
-					                 .OrderBy(v => v.GetDistanceTo(myArmy.Center))
-					                 .First()
-					                 .ToPoint();
+				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles)?.ToList();
+				if (nextEnemyGroup != null)
+				{
+					cachedTargetGroup = nextEnemyGroup.Select(v => v.Id).ToList();
+					cachedTarget = nextEnemyGroup.GetCenterPoint();
+					return cachedTarget;
+				}
+				var nextTarget = enemyVehicles
+					.OrderBy(v => v.GetDistanceTo(myArmy.Center))
+					.First()
+					.ToPoint();
 				cachedTarget = nextTarget;
 				lastClusteringTick = world.TickIndex;
 				return nextTarget;
