@@ -7,6 +7,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class ScaleCommand : Command
 	{
+		public override int FormationId { get; }
 		private const ActionType ActionType = Model.ActionType.Scale;
 		private bool isStarted;
 		private IList<long> vehicleIds;
@@ -16,13 +17,14 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly bool canBeParallel;
 		private Func<int, bool> isFinished;
 
-		public ScaleCommand(IList<long> vehicleIds, Point2D point, double factor, bool canBeParallel = false, Func<int, bool> isFinished = null)
-			: this(vehicleIds, point.X, point.Y, factor, canBeParallel, isFinished)
+		public ScaleCommand(int formationId, IList<long> vehicleIds, Point2D point, double factor, bool canBeParallel = false, Func<int, bool> isFinished = null)
+			: this(formationId, vehicleIds, point.X, point.Y, factor, canBeParallel, isFinished)
 		{
 		}
 
-		public ScaleCommand(IList<long> vehicleIds, double x, double y, double factor, bool canBeParallel = false, Func<int, bool> isFinished = null)
+		public ScaleCommand(int formationId, IList<long> vehicleIds, double x, double y, double factor, bool canBeParallel = false, Func<int, bool> isFinished = null)
 		{
+			FormationId = formationId;
 			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
@@ -39,6 +41,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			move.Factor = factor;
 
 			isStarted = true;
+			foreach (var vehicleId in vehicleIds)
+			{
+				registry.ForceUnidleVehicle(vehicleId);
+			}
 		}
 
 		public override bool IsStarted()

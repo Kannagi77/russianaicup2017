@@ -1,36 +1,28 @@
-﻿using System.Drawing;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
-	public class NukeCommand : Command
+	public class SetProductionCommand : Command
 	{
 		public override int FormationId { get; }
-		private const ActionType ActionType = Model.ActionType.TacticalNuclearStrike;
+		private const ActionType ActionType = Model.ActionType.SetupVehicleProduction;
+		private readonly long facilityId;
+		private readonly VehicleType vehicleType;
 		private bool isStarted;
-		private readonly long vehicleId;
-		private readonly double x;
-		private readonly double y;
 
-		public NukeCommand(int formationId, long vehicleId, double x, double y)
+		public SetProductionCommand(long facilityId, VehicleType vehicleType)
 		{
-			FormationId = formationId;
-			this.vehicleId = vehicleId;
-			this.x = x;
-			this.y = y;
+			this.facilityId = facilityId;
+			this.vehicleType = vehicleType;
 		}
 
 		public override void Commit(Move move, VehicleRegistry registry)
 		{
 			move.Action = ActionType;
-			move.VehicleId = vehicleId;
-			move.X = x;
-			move.Y = y;
+			move.FacilityId = facilityId;
+			move.VehicleType = vehicleType;
 
 			isStarted = true;
-#if DEBUG
-			RewindClient.Instance.Circle(x, y, 50, Color.LawnGreen);
-#endif
 		}
 
 		public override bool IsStarted()
@@ -45,7 +37,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 
 		public override bool CanBeParallel()
 		{
-			return true;
+			return false;
 		}
 	}
 }

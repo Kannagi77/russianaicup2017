@@ -83,7 +83,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 
 		public bool IsVehicleIdle(Vehicle vehicle) => idleVehicleIds.Contains(vehicle.Id);
 		public bool IsVehicleIdle(long vehicleId) => idleVehicleIds.Contains(vehicleId);
-		public void ForceUnidleVehicle(Vehicle vehicle) => idleVehicleIds.Remove(vehicle.Id);
+		public void ForceUnidleVehicle(long vehicleId) => idleVehicleIds.Remove(vehicleId);
 
 		public IList<long> FilterDeadVehicles(IEnumerable<long> vehicleIds)
 		{
@@ -94,6 +94,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		{
 			var vehicle = GetVehicleById(id);
 			return vehicle.VisionRange * GetVisionCoefficient(vehicle, world, game);
+		}
+
+		public static IEnumerable<Facility> GetUncapturedFacilities(World world, Player me)
+		{
+			return world.Facilities.Where(f => f.OwnerPlayerId != me.Id).ToList();
+		}
+
+		public static IEnumerable<Facility> GetUnusedFacilities(World world, Player me)
+		{
+			return world.Facilities
+				.Where(f => f.OwnerPlayerId == me.Id && f.Type == FacilityType.VehicleFactory && f.VehicleType == null)
+				.ToList();
 		}
 
 		private double GetVisionCoefficient(Vehicle vehicle, World world, Game game)

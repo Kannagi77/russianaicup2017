@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
@@ -8,68 +7,102 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 {
 	public class CommandManager
 	{
-		private readonly Queue<Tuple<Command, int>> commandsQueue = new Queue<Tuple<Command, int>>();
-		private const int CommandTimeout = 450;
+		private readonly Dictionary<int, Queue<Command>> commandQueues = new Dictionary<int, Queue<Command>>();
 		private bool forcePlayNextCommand;
+		private int lockedFormationId;
 
-		public void EnqueueCommand(Command command, int worldTick)
+		public void EnqueueCommand(Command command)
 		{
-			commandsQueue.Enqueue(new Tuple<Command, int>(command, worldTick));
+			var formationId = command.FormationId;
+			if (!commandQueues.ContainsKey(formationId))
+				commandQueues.Add(formationId, new Queue<Command>());
+			commandQueues[formationId].Enqueue(command);
 		}
 
-		public void ClearCommandsQueue()
+		public void ClearCommandsQueue(int formationId)
 		{
-			commandsQueue.Clear();
+			if (commandQueues.ContainsKey(formationId))
+				commandQueues[formationId].Clear();
 		}
 
-		public Command PeekCommand()
+		public Command PeekCommand(int formationId)
 		{
-			return commandsQueue.Peek().Item1;
+			return !commandQueues.ContainsKey(formationId)
+				? null
+				: commandQueues[formationId].Peek();
 		}
 
-		public Command PeekLastCommand()
+		public Command PeekLastCommand(int formationId)
 		{
-			return commandsQueue.Last().Item1;
-		}
-
-		public List<Command> PeekCommands(int count)
-		{
-			return commandsQueue.Take(count).Select(t => t.Item1).ToList();
+			return !commandQueues.ContainsKey(formationId)
+				? null
+				: commandQueues[formationId].Last();
 		}
 
 		public bool PlayCommandIfPossible(VehicleRegistry registry, Player player, Move move, int worldTick)
 		{
-			if (commandsQueue.Count == 0)
+			return lockedFormationId != 0
+				? PlayFormationCommandIfPossible(commandQueues[lockedFormationId], registry, player, move, worldTick)
+				: commandQueues.Any(p => PlayFormationCommandIfPossible(p.Value, registry, player, move, worldTick));
+		}
+
+		private bool PlayFormationCommandIfPossible(Queue<Command> formationQueue,
+			VehicleRegistry registry,
+			Player player,
+			Move move,
+			int worldTick)
+		{
+			if (formationQueue.Count == 0)
 				return false;
 			var canPlayCommand = CanPlayCommand(player);
 			if (!canPlayCommand)
 				return false;
-			var currentCommand = commandsQueue.Peek().Item1;
-			var currentCommandStartTick = commandsQueue.Peek().Item2;
+			var currentCommand = formationQueue.Peek();
+#if DEBUG
+			RewindClient.Instance.Message($"Current command {currentCommand}");
+#endif
 			if (!currentCommand.IsStarted())
+			{
 				currentCommand.Commit(move, registry);
+				if (IsSelectCommand(currentCommand))
+					lockedFormationId = currentCommand.FormationId;
+				if (formationQueue.Count == 1 || IsSelectCommand(formationQueue.ElementAt(1)))
+					lockedFormationId = 0;
+#if DEBUG
+				RewindClient.Instance.Message($"Commiting command {currentCommand}");
+#endif
+			}
 			if (forcePlayNextCommand)
 			{
 				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;
 				return true;
 			}
-			if (currentCommand.CanBeParallel() || currentCommand.IsFinished(worldTick, registry) ||
-			    worldTick - currentCommandStartTick > CommandTimeout)
+			if (currentCommand.CanBeParallel() || currentCommand.IsFinished(worldTick, registry))
 			{
+#if DEBUG
+				RewindClient.Instance.Message($"{currentCommand} {nameof(currentCommand.CanBeParallel)}:{currentCommand.CanBeParallel()}");
+				RewindClient.Instance.Message($"{currentCommand} {nameof(currentCommand.IsFinished)}:{currentCommand.IsFinished(worldTick, registry)}");
+#endif
 				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;
-				commandsQueue.Dequeue();
+				formationQueue.Dequeue();
+				return true;
 			}
-			return true;
+			return false;
 		}
 
-		public bool CanPlayCommand(Player player)
+		private bool IsSelectCommand(Command command)
+		{
+			return command is SelectCommand || command is SelectGroupCommand || command is SelectVehiclesCommand;
+		}
+
+		private static bool CanPlayCommand(Player player)
 		{
 			return player.RemainingActionCooldownTicks == 0;
 		}
 
 		public int GetCurrentQueueSize()
 		{
-			return commandsQueue.Count;
+			return commandQueues.SelectMany(p => p.Value).Count();
 		}
 	}
 }

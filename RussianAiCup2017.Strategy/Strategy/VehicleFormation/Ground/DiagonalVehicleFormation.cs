@@ -1,23 +1,25 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
 
-namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
+namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Ground
 {
-	public class DiagonalFormationMove : StrategyMove
+	public class DiagonalVehicleFormation : VehicleFormationBase
 	{
-		public override StrategyState State => StrategyState.DiagonalFormation;
 		private readonly List<MoveCommand> commands = new List<MoveCommand>();
-		private const double Eps = 0.1;
 
-		public DiagonalFormationMove(CommandManager commandManager, VehicleRegistry vehicleRegistry) : base(commandManager, vehicleRegistry)
+		public DiagonalVehicleFormation(int id,
+			IEnumerable<long> vehicleIds,
+			CommandManager commandManager,
+			VehicleRegistry vehicleRegistry)
+			: base(id, vehicleIds, commandManager, vehicleRegistry)
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me, Game game)
+		public override VehicleFormationResult PerformAction(World world, Player me, Game game)
 		{
 			if (!commands.Any())
 			{
@@ -26,10 +28,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 			if (commands.Any() && commands.All(c => c.IsStarted()) && commands.All(c => c.IsFinished(world.TickIndex, VehicleRegistry)))
 			{
-				commands.Clear();
-				return StrategyState.InitFormation;
+				return new VehicleFormationResult(new InitialGroundVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
 			}
-			return StrategyState.DiagonalFormation;
+			return new VehicleFormationResult(this);
 		}
 
 		private void DoWork(Player me, World world)
@@ -50,18 +51,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				: leftGroupType == VehicleType.Arrv
 					? arrvs
 					: ifvs;
-			CommandManager.EnqueueCommand(new SelectAllCommand(world, leftGroupType), world.TickIndex);
-			var command = new MoveCommand(leftGroup.Select(v => v.Id).ToList(), MagicConstants.InitialGapSize, 0);
-			CommandManager.EnqueueCommand(command, world.TickIndex);
+			CommandManager.EnqueueCommand(new SelectAllCommand(Id, world, leftGroupType));
+			var command = new MoveCommand(Id, leftGroup.Select(v => v.Id).ToList(), MagicConstants.InitialGapSize, 0);
+			CommandManager.EnqueueCommand(command);
 			commands.Add(command);
 		}
 
 		private static VehicleType GetLeftGroupType(double tanksCoord, double arrvsCoord, double ifvsCoord)
 		{
 			var upperCoord = new List<double> { tanksCoord, arrvsCoord, ifvsCoord }.OrderBy(y => y).First();
-			return Math.Abs(tanksCoord - upperCoord) < Eps
+			return Math.Abs(tanksCoord - upperCoord) < MagicConstants.Eps
 				? VehicleType.Tank
-				: Math.Abs(arrvsCoord - upperCoord) < Eps
+				: Math.Abs(arrvsCoord - upperCoord) < MagicConstants.Eps
 					? VehicleType.Arrv
 					: VehicleType.Ifv;
 		}

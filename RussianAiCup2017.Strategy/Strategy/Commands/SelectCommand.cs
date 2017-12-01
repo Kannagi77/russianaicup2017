@@ -5,6 +5,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class SelectCommand : Command
 	{
+		public override int FormationId { get; }
 		private const ActionType ActionType = Model.ActionType.ClearAndSelect;
 		private readonly double x1;
 		private readonly double y1;
@@ -14,18 +15,25 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly bool forcePlayNextCommand;
 		private bool isStarted;
 
-		public SelectCommand(double x1, double y1, double x2, double y2)
-			: this(x1, y1, x2, y2, null)
+		public SelectCommand(int formationId, double x1, double y1, double x2, double y2)
+			: this(formationId, x1, y1, x2, y2, null)
 		{
 		}
 
-		public SelectCommand(double x1, double y1, double x2, double y2, bool forcePlayNextCommand)
-			: this(x1, y1, x2, y2, null, forcePlayNextCommand)
+		public SelectCommand(int formationId, double x1, double y1, double x2, double y2, bool forcePlayNextCommand)
+			: this(formationId, x1, y1, x2, y2, null, forcePlayNextCommand)
 		{
 		}
 
-		public SelectCommand(double x1, double y1, double x2, double y2, VehicleType? type, bool forcePlayNextCommand = false)
+		public SelectCommand(int formationId,
+			double x1,
+			double y1,
+			double x2,
+			double y2,
+			VehicleType? type,
+			bool forcePlayNextCommand = false)
 		{
+			FormationId = formationId;
 			this.forcePlayNextCommand = forcePlayNextCommand;
 			this.x1 = x1;
 			this.y1 = y1;
@@ -70,5 +78,17 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		}
 
 		public override bool ForcePlayNextCommand => forcePlayNextCommand;
+
+#if DEBUG
+		public override string ToString()
+		{
+			return $"{ActionType}: " +
+			       $"{nameof(x1)}={x1}, " +
+			       $"{nameof(y1)}={y1}, " +
+			       $"{nameof(x2)}={x2}, " +
+			       $"{nameof(y2)}={y2}, " +
+			       $"{nameof(type)}={type}";
+		}
+#endif
 	}
 }

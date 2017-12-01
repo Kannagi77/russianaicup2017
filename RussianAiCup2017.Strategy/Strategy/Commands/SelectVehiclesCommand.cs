@@ -7,14 +7,19 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class SelectVehiclesCommand : Command
 	{
+		public override int FormationId { get; }
 		private const ActionType ActionType = Model.ActionType.ClearAndSelect;
 		private readonly IList<long> vehicleIds;
 		private readonly VehicleType? type;
 		private readonly bool forcePlayNextCommand;
 		private bool isStarted;
 
-		public SelectVehiclesCommand(IList<long> vehicleIds, VehicleType? type = null, bool forcePlayNextCommand = false)
+		public SelectVehiclesCommand(int formationId,
+			IList<long> vehicleIds,
+			VehicleType? type = null,
+			bool forcePlayNextCommand = false)
 		{
+			FormationId = formationId;
 			this.vehicleIds = vehicleIds;
 			this.type = type;
 			this.forcePlayNextCommand = forcePlayNextCommand;
@@ -23,7 +28,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		public override void Commit(Move move, VehicleRegistry registry)
 		{
 			var vehicles = registry.GetVehiclesByIds(vehicleIds);
-
+			if (!vehicles.Any())
+			{
+				isStarted = true;
+				return;
+			}
+			
 			var x1 = vehicles.Select(v => v.X).Min() - 1;
 			var y1 = vehicles.Select(v => v.Y).Min() - 1;
 			var x2 = vehicles.Select(v => v.X).Max() + 1;

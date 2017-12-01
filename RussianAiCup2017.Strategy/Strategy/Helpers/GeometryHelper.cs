@@ -24,6 +24,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers
 			return new Point2D(unit.X, unit.Y);
 		}
 
+		public static Point2D ToPoint(this Facility facility, Game game)
+		{
+			return new Point2D(facility.Left + game.FacilityWidth / 2, facility.Top + game.FacilityHeight / 2);
+		}
+
 		public static Point2D GetCenterPoint(this IEnumerable<Vehicle> units)
 		{
 			var list = units.ToList();

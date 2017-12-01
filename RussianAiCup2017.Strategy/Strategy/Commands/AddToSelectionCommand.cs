@@ -4,6 +4,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class AddToSelectionCommand : Command
 	{
+		public override int FormationId { get; }
 		private const ActionType ActionType = Model.ActionType.AddToSelection;
 		private readonly double x1;
 		private readonly double y1;
@@ -12,13 +13,14 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly VehicleType? type;
 		private bool isStarted;
 
-		public AddToSelectionCommand(double x1, double y1, double x2, double y2)
-			: this(x1, y1, x2, y2, null)
+		public AddToSelectionCommand(int formationId, double x1, double y1, double x2, double y2)
+			: this(formationId, x1, y1, x2, y2, null)
 		{
 		}
 
-		public AddToSelectionCommand(double x1, double y1, double x2, double y2, VehicleType? type)
+		public AddToSelectionCommand(int formationId, double x1, double y1, double x2, double y2, VehicleType? type)
 		{
+			FormationId = formationId;
 			this.x1 = x1;
 			this.y1 = y1;
 			this.x2 = x2;
@@ -55,5 +57,17 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 
 			isStarted = true;
 		}
+
+#if DEBUG
+		public override string ToString()
+		{
+			return $"{ActionType}: " +
+			       $"{nameof(x1)}={x1}, " +
+			       $"{nameof(y1)}={y1}, " +
+				   $"{nameof(x2)}={x2}, "+
+				   $"{nameof(y2)}={y2}, "+
+				   $"{nameof(type)}={type}";
+		}
+#endif
 	}
 }

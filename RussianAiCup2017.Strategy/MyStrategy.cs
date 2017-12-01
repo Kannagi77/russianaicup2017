@@ -1,5 +1,11 @@
+using System.Collections.Generic;
+using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Air;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Ground;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 {
@@ -7,8 +13,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 	{
 		private static readonly CommandManager CommandManager = new CommandManager();
 		private static readonly VehicleRegistry VehicleRegistry = new VehicleRegistry();
-		private readonly MoveSelector moveSelector = new MoveSelector(CommandManager, VehicleRegistry);
-		private StrategyState currentState = StrategyState.InitFormation;
+		private static List<IVehicleFormation> formations = new List<IVehicleFormation>();
 #if DEBUG
 		private bool isGridDrawn;
 #endif
@@ -16,6 +21,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 		public void Move(Player me, World world, Game game, Move move)
 		{
 			VehicleRegistry.Update(world, me, game);
+			if (world.TickIndex == 0)
+			{
+				InitFormations(me);
+			}
 #if DEBUG
 			RewindClient.Instance.Message($"Commands queue size: {CommandManager.GetCurrentQueueSize()}; ");
 			RewindClient.Instance.Message($"My points: {world.GetMyPlayer().Score}; ");
@@ -28,7 +37,38 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 #endif
 			if (CommandManager.PlayCommandIfPossible(VehicleRegistry, me, move, world.TickIndex))
 				return;
-			currentState = moveSelector.MakeNextMove(currentState, world, me, game);
+			var unusedFacilities = VehicleRegistry.GetUnusedFacilities(world, me).ToList();
+			if (unusedFacilities.Any())
+			{
+				var facility = unusedFacilities.First();
+				CommandManager.EnqueueCommand(new SetProductionCommand(facility.Id, VehicleType.Helicopter));
+				return;
+			}
+			var nextTickFormations = new List<IVehicleFormation>();
+			foreach (var formation in formations)
+			{
+				var result = formation.PerformAction(world, me, game);
+				nextTickFormations.AddRange(result.NewFormations);
+			}
+			formations = nextTickFormations;
+		}
+
+		private static void InitFormations(Player me)
+		{
+			formations.Add(new InitialGroundVehicleFormation(MagicConstants.GroundFormationGroupId,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Arrv || v.Type == VehicleType.Ifv || v.Type == VehicleType.Tank)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry));
+			formations.Add(new InitialAirVehicleFormation(MagicConstants.AirFormationGroupId,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Fighter || v.Type == VehicleType.Helicopter)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry));
 		}
 
 #if DEBUG

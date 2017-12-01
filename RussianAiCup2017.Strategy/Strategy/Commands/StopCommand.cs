@@ -4,8 +4,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class StopCommand : MoveCommand
 	{
-		public StopCommand(IList<long> vehicleIds)
-			: base(vehicleIds, 0, 0)
+		public StopCommand(int formationId, IList<long> vehicleIds)
+			: base(formationId, vehicleIds, 0, 0)
 		{
 		}
 	}

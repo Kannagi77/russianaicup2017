@@ -4,4 +4,6 @@ del Strategy.zip
 "C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/Commands/*.cs
 "C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/Helpers/*.cs
 "C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/Moves/*.cs
-"C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/Wrappers/*.cs
+"C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/VehicleFormation/*.cs
+"C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/VehicleFormation/Air/*.cs
+"C:\Program Files\7-Zip\7z.exe" a Strategy.zip ./RussianAiCup2017.Strategy/Strategy/VehicleFormation/Ground/*.cs

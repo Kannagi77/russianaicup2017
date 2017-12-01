@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
@@ -10,71 +11,102 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 	{
 		private readonly VehicleRegistry registry;
 		private readonly CommandManager commandManager;
-		public List<long> VehicleIds { get; private set; }
+		public int FormationId { get; }
+		public List<long> VehicleIds { get; }
 		public Point2D Center => registry.GetVehiclesByIds(VehicleIds).GetCenterPoint();
-		public VehiclesGroup(List<long> vehicleIds, VehicleRegistry registry, CommandManager commandManager)
+		public VehiclesGroup(int formationId, List<long> vehicleIds, VehicleRegistry registry, CommandManager commandManager)
 		{
 			this.registry = registry;
 			this.commandManager = commandManager;
+			FormationId = formationId;
 			VehicleIds = vehicleIds;
 		}
 
-		public VehiclesGroup Select(World world, VehicleType? type = null)
+		public VehiclesGroup SelectVehicles(VehicleType? type = null)
 		{
-			commandManager.EnqueueCommand(new SelectVehiclesCommand(VehicleIds, type), world.TickIndex);
+			commandManager.EnqueueCommand(new SelectVehiclesCommand(FormationId, VehicleIds, type));
 			return this;
 		}
 
-		public VehiclesGroup AddToSelection(List<Vehicle> vehicles, World world)
+		public VehiclesGroup Select(int groupId)
+		{
+			commandManager.EnqueueCommand(new SelectGroupCommand(FormationId, groupId));
+			return this;
+		}
+
+		public VehiclesGroup SelectArea(double x1, double y1, double x2, double y2, bool forcePlayNextCommand = false)
+		{
+			commandManager.EnqueueCommand(new SelectCommand(FormationId, x1, y1, x2, y2, forcePlayNextCommand));
+			return this;
+		}
+
+		public VehiclesGroup AddToSelection(List<Vehicle> vehicles)
 		{
 			commandManager.EnqueueCommand(new AddToSelectionCommand(
+				FormationId,
 				vehicles.Select(v => v.X).Min(),
 				vehicles.Select(v => v.Y).Min(),
 				vehicles.Select(v => v.X).Max(),
-				vehicles.Select(v => v.Y).Max()),
-				world.TickIndex);
+				vehicles.Select(v => v.Y).Max()));
 			return this;
 		}
 
-		public VehiclesGroup MoveTo(Point2D destination, World world, double maxSpeed = 0, bool canBeParallel = false)
+		public VehiclesGroup MoveTo(Point2D destination, double maxSpeed = 0, bool canBeParallel = false)
 		{
 			var direction = Center.To(destination);
-			commandManager.EnqueueCommand(new MoveCommand(VehicleIds, direction.X, direction.Y, maxSpeed, canBeParallel), world.TickIndex);
+			commandManager.EnqueueCommand(new MoveCommand(FormationId, VehicleIds, direction.X, direction.Y, maxSpeed, canBeParallel));
 			return this;
 		}
 
-		public VehiclesGroup MoveByVector(Vector2D direction, World world = null, double maxSpeed = 0, bool canBeParallel = false)
+		public VehiclesGroup MoveByVector(Vector2D direction, double maxSpeed = 0, bool canBeParallel = false)
 		{
-			return MoveByVector(direction.X, direction.Y, world, maxSpeed, canBeParallel);
+			return MoveByVector(direction.X, direction.Y, maxSpeed, canBeParallel);
 		}
 
-		public VehiclesGroup MoveByVector(double x, double y, World world = null, double maxSpeed = 0, bool canBeParallel = false)
+		public VehiclesGroup MoveByVector(double x, double y, double maxSpeed = 0, bool canBeParallel = false)
 		{
-			var tickIndex = world?.TickIndex ?? int.MaxValue;
-			commandManager.EnqueueCommand(new MoveCommand(VehicleIds, x, y, maxSpeed, canBeParallel), tickIndex);
+			commandManager.EnqueueCommand(new MoveCommand(FormationId, VehicleIds, x, y, maxSpeed, canBeParallel));
 			return this;
 		}
 
-		public VehiclesGroup MergeWith(List<long> anotherVehicleIds)
+		public VehiclesGroup MergeWith(IEnumerable<long> anotherVehicleIds)
 		{
-			return new VehiclesGroup(VehicleIds.Concat(anotherVehicleIds).ToList(), registry, commandManager);
+			return new VehiclesGroup(FormationId, VehicleIds.Concat(anotherVehicleIds).ToList(), registry, commandManager);
 		}
 
-		public VehiclesGroup RotateBy(double angle, World world)
+		public VehiclesGroup RotateBy(double angle)
 		{
-			commandManager.EnqueueCommand(new RotateCommand(VehicleIds, Center, angle), world.TickIndex);
+			commandManager.EnqueueCommand(new RotateCommand(FormationId, VehicleIds, Center, angle));
 			return this;
 		}
 
-		public VehiclesGroup Nuke(long gunnerId, Vehicle target, World world)
+		public VehiclesGroup Nuke(long gunnerId, Vehicle target)
 		{
-			commandManager.EnqueueCommand(new NukeCommand(gunnerId, target.X, target.Y), world.TickIndex);
+			commandManager.EnqueueCommand(new NukeCommand(FormationId, gunnerId, target.X, target.Y));
 			return this;
 		}
 
-		public VehiclesGroup Scale(double factor, World world)
+		public VehiclesGroup Scale(double factor)
 		{
-			commandManager.EnqueueCommand(new ScaleCommand(VehicleIds, Center, factor, true), world.TickIndex);
+			commandManager.EnqueueCommand(new ScaleCommand(FormationId, VehicleIds, Center, factor));
+			return this;
+		}
+
+		public VehiclesGroup Scale(double x, double y, double factor, Func<int, bool> isFinished = null)
+		{
+			commandManager.EnqueueCommand(new ScaleCommand(FormationId, VehicleIds, x, y, factor, isFinished: isFinished));
+			return this;
+		}
+
+		public VehiclesGroup Stop()
+		{
+			commandManager.EnqueueCommand(new StopCommand(FormationId, VehicleIds));
+			return this;
+		}
+
+		public VehiclesGroup Assign(int groupId)
+		{
+			commandManager.EnqueueCommand(new AssignCommand(FormationId, groupId));
 			return this;
 		}
 	}

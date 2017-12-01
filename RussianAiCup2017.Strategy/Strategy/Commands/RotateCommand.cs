@@ -6,6 +6,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class RotateCommand : Command
 	{
+		public override int FormationId { get; }
 		private const ActionType ActionType = Model.ActionType.Rotate;
 		private bool isStarted;
 		private IList<long> vehicleIds;
@@ -14,13 +15,14 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly double angle;
 		private bool canBeParallel;
 
-		public RotateCommand(IList<long> vehicleIds, Point2D p, double angle, bool canBeParallel = false)
-			: this(vehicleIds, p.X, p.Y, angle, canBeParallel)
+		public RotateCommand(int formationId, IList<long> vehicleIds, Point2D p, double angle, bool canBeParallel = false)
+			: this(formationId, vehicleIds, p.X, p.Y, angle, canBeParallel)
 		{
 		}
 
-		public RotateCommand(IList<long> vehicleIds, double x, double y, double angle, bool canBeParallel = false)
+		public RotateCommand(int formationId, IList<long> vehicleIds, double x, double y, double angle, bool canBeParallel = false)
 		{
+			FormationId = formationId;
 			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
@@ -36,6 +38,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			move.Angle = angle;
 
 			isStarted = true;
+			foreach (var vehicleId in vehicleIds)
+			{
+				registry.ForceUnidleVehicle(vehicleId);
+			}
 		}
 
 		public override bool IsStarted()

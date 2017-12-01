@@ -1,20 +1,22 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
 
-namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
+namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Ground
 {
-	public class InitFormationMove : StrategyMove
+	public class InitialGroundVehicleFormation : VehicleFormationBase
 	{
-		public override StrategyState State => StrategyState.InitFormation;
-
-		public InitFormationMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
-			: base(commandManager, vehicleRegistry)
+		public InitialGroundVehicleFormation(int id,
+			IEnumerable<long> vehicleIds,
+			CommandManager commandManager,
+			VehicleRegistry vehicleRegistry)
+			: base(id, vehicleIds, commandManager, vehicleRegistry)
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me, Game game)
+		public override VehicleFormationResult PerformAction(World world, Player me, Game game)
 		{
 			var myVehicles = VehicleRegistry.MyVehicles(me);
 
@@ -43,32 +45,32 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 
 			if (xTanksArrvs && xArrvsIfvs || yTanksArrvs && yArrvsIfvs)
 			{
-				return StrategyState.FinishAirMove;
-			}
+				return new VehicleFormationResult(new FinishGroundVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
+			} 
 
 			if (xTanksArrvs && !yTanksArrvsGap && !yTanksIfvs && !yArrvsIfvs
-			    || xArrvsIfvs && !yArrvsIfvsGap && !yTanksArrvs && !yTanksIfvs
-			    || xTanksIfvs && !yTanksIfvsGap && !yArrvsIfvs && !yTanksArrvs
-			    || yTanksArrvs && !xTanksArrvsGap && !xTanksIfvs && !xArrvsIfvs
-			    || yArrvsIfvs && !xArrvsIfvsGap && !xTanksArrvs && !xTanksIfvs
-			    || yTanksIfvs && !xTanksIfvsGap && !xTanksArrvs && !xArrvsIfvs)
+				|| xArrvsIfvs && !yArrvsIfvsGap && !yTanksArrvs && !yTanksIfvs
+				|| xTanksIfvs && !yTanksIfvsGap && !yArrvsIfvs && !yTanksArrvs
+				|| yTanksArrvs && !xTanksArrvsGap && !xTanksIfvs && !xArrvsIfvs
+				|| yArrvsIfvs && !xArrvsIfvsGap && !xTanksArrvs && !xTanksIfvs
+				|| yTanksIfvs && !xTanksIfvsGap && !xTanksArrvs && !xArrvsIfvs)
 			{
-				return StrategyState.TwoOnOneLineFormation;
+				return new VehicleFormationResult(new TwoOnOneLineVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
 			}
 
 			if (xTanksArrvs && !yTanksArrvsGap && (yTanksIfvs && !xTanksIfvsGap || yArrvsIfvs && !xArrvsIfvsGap)
-			    || xArrvsIfvs && !yArrvsIfvsGap && (yTanksArrvs && !xTanksArrvsGap || yTanksIfvs && !xTanksIfvsGap)
-			    || xTanksIfvs && !yTanksIfvsGap && (yTanksArrvs && !xTanksArrvsGap || yArrvsIfvs && !xArrvsIfvsGap))
+				|| xArrvsIfvs && !yArrvsIfvsGap && (yTanksArrvs && !xTanksArrvsGap || yTanksIfvs && !xTanksIfvsGap)
+				|| xTanksIfvs && !yTanksIfvsGap && (yTanksArrvs && !xTanksArrvsGap || yArrvsIfvs && !xArrvsIfvsGap))
 			{
-				return StrategyState.CornerFormation;
+				return new VehicleFormationResult(new CornerVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
 			}
 
 			if (xTanksArrvsGap || xTanksIfvsGap || xArrvsIfvsGap
-			    || yTanksArrvsGap || yTanksIfvsGap || yArrvsIfvsGap)
+				|| yTanksArrvsGap || yTanksIfvsGap || yArrvsIfvsGap)
 			{
-				return StrategyState.GappedFormation;
+				return new VehicleFormationResult(new GappedVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
 			}
-			return StrategyState.DiagonalFormation;
+			return new VehicleFormationResult(new DiagonalVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
 		}
 	}
 }

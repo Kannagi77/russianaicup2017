@@ -1,37 +1,39 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
 
-namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
+namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Ground
 {
-	public class GappedFormationMove : StrategyMove
+	public class GappedVehicleFormation : VehicleFormationBase
 	{
-		public override StrategyState State => StrategyState.GappedFormation;
 		private MoveCommand command;
 
-		public GappedFormationMove(CommandManager commandManager, VehicleRegistry vehicleRegistry)
-			: base(commandManager, vehicleRegistry)
+		public GappedVehicleFormation(int id,
+			IEnumerable<long> vehicleIds,
+			CommandManager commandManager,
+			VehicleRegistry vehicleRegistry)
+			: base(id, vehicleIds, commandManager, vehicleRegistry)
 		{
 		}
 
-		public override StrategyState Perform(World world, Player me, Game game)
+		public override VehicleFormationResult PerformAction(World world, Player me, Game game)
 		{
 			if (command == null)
 			{
-				DoWork(me, world);
+				DoWork(me);
 			}
 
 			if (command != null && command.IsStarted() && command.IsFinished(world.TickIndex, VehicleRegistry))
 			{
-				command = null;
-				return StrategyState.InitFormation;
+				return new VehicleFormationResult(new InitialGroundVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
 			}
-			return StrategyState.GappedFormation;
+			return new VehicleFormationResult(this);
 		}
 
-		private void DoWork(Player me, World world)
+		private void DoWork(Player me)
 		{
 			var myVehicles = VehicleRegistry.MyVehicles(me);
 			var tanks = myVehicles.Where(v => v.Type == VehicleType.Tank).ToList();
@@ -86,51 +88,51 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			RewindClient.Instance.Message($"{nameof(yTanksIfvsGap)} = {yTanksIfvsGap}; ");
 #endif
 
-			var arrvsGroup = new VehiclesGroup(arrvs.Select(v => v.Id).ToList(), VehicleRegistry, CommandManager);
-			var ifvsGroup = new VehiclesGroup(ifvs.Select(v => v.Id).ToList(), VehicleRegistry, CommandManager);
+			var arrvsGroup = new VehiclesGroup(Id, arrvs.Select(v => v.Id).ToList(), VehicleRegistry, CommandManager);
+			var ifvsGroup = new VehiclesGroup(Id, ifvs.Select(v => v.Id).ToList(), VehicleRegistry, CommandManager);
 			if (xTanksArrvsGap)
 			{
-				MoveCloserX(arrvsGroup, centerOfTanks.X, world);
+				MoveCloserX(arrvsGroup, centerOfTanks.X);
 			}
 			else if (xArrvsIfvsGap)
 			{
-				MoveCloserX(arrvsGroup, centerOfIfvs.X, world);
+				MoveCloserX(arrvsGroup, centerOfIfvs.X);
 			}
 			else if (xTanksIfvsGap)
 			{
-				MoveCloserX(ifvsGroup, centerOfTanks.X, world);
+				MoveCloserX(ifvsGroup, centerOfTanks.X);
 			}
 			else if (yTanksArrvsGap)
 			{
-				MoveCloserY(arrvsGroup, centerOfTanks.Y, world);
+				MoveCloserY(arrvsGroup, centerOfTanks.Y);
 			}
 			else if (yArrvsIfvsGap)
 			{
-				MoveCloserY(arrvsGroup, centerOfIfvs.Y, world);
+				MoveCloserY(arrvsGroup, centerOfIfvs.Y);
 			}
 			else
 			{
-				MoveCloserY(ifvsGroup, centerOfTanks.Y, world);
+				MoveCloserY(ifvsGroup, centerOfTanks.Y);
 			}
-			command = CommandManager.PeekLastCommand() as MoveCommand;
+			command = CommandManager.PeekLastCommand(Id) as MoveCommand;
 		}
 
-		private static void MoveCloserX(VehiclesGroup group, double secondGroupX, World world)
+		private static void MoveCloserX(VehiclesGroup group, double secondGroupX)
 		{
 			group
-				.Select(world)
+				.SelectVehicles()
 				.MoveTo(group.Center.X > secondGroupX
 					? new Point2D(secondGroupX + MagicConstants.InitialGapSize, group.Center.Y)
-					: new Point2D(group.Center.X + MagicConstants.InitialGapSize, group.Center.Y), world);
+					: new Point2D(group.Center.X + MagicConstants.InitialGapSize, group.Center.Y));
 		}
 
-		private static void MoveCloserY(VehiclesGroup group, double secondGroupY, World world)
+		private static void MoveCloserY(VehiclesGroup group, double secondGroupY)
 		{
 			group
-				.Select(world)
+				.SelectVehicles()
 				.MoveTo(group.Center.Y > secondGroupY
 					? new Point2D(group.Center.X, secondGroupY + MagicConstants.InitialGapSize)
-					: new Point2D(group.Center.X, group.Center.Y + MagicConstants.InitialGapSize), world);
+					: new Point2D(group.Center.X, group.Center.Y + MagicConstants.InitialGapSize));
 		}
 	}
 }

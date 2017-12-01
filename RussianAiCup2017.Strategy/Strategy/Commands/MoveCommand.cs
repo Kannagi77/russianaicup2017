@@ -6,6 +6,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 {
 	public class MoveCommand : Command
 	{
+		public override int FormationId { get; }
 		private const ActionType ActionType = Model.ActionType.Move;
 		private bool isStarted;
 		private IList<long> vehicleIds;
@@ -14,21 +15,23 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly double maxSpeed;
 		private readonly bool canBeParallel;
 
-		public MoveCommand(IList<long> vehicleIds, Point2D point, bool canBeParallel = false)
-			: this(vehicleIds, point.X, point.Y, canBeParallel)
+		public MoveCommand(int formationId, IList<long> vehicleIds, Point2D point, bool canBeParallel = false)
+			: this(formationId, vehicleIds, point.X, point.Y, canBeParallel)
 		{
 		}
 
-		public MoveCommand(IList<long> vehicleIds, double x, double y, bool canBeParallel = false)
+		public MoveCommand(int formationId, IList<long> vehicleIds, double x, double y, bool canBeParallel = false)
 		{
+			FormationId = formationId;
 			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
 			this.canBeParallel = canBeParallel;
 		}
 
-		public MoveCommand(IList<long> vehicleIds, double x, double y, double maxSpeed, bool canBeParallel = false)
+		public MoveCommand(int formationId, IList<long> vehicleIds, double x, double y, double maxSpeed, bool canBeParallel = false)
 		{
+			FormationId = formationId;
 			this.vehicleIds = vehicleIds;
 			this.x = x;
 			this.y = y;
@@ -44,6 +47,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 			move.MaxSpeed = maxSpeed;
 
 			isStarted = true;
+			foreach (var vehicleId in vehicleIds)
+			{
+				registry.ForceUnidleVehicle(vehicleId);
+			}
 		}
 
 		public override bool IsStarted()
