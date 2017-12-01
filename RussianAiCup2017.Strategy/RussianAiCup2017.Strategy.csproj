@@ -94,7 +94,9 @@
     <Compile Include="RewindClient.cs" />
     <Compile Include="Strategy\Commands\AddToSelectionCommand.cs" />
     <Compile Include="Strategy\Commands\NukeCommand.cs" />
+    <Compile Include="Strategy\Commands\SelectAllCommand.cs" />
     <Compile Include="Strategy\Commands\SelectVehiclesCommand.cs" />
+    <Compile Include="Strategy\Commands\StopCommand.cs" />
     <Compile Include="Strategy\Helpers\AngleHelper.cs" />
     <Compile Include="Strategy\Helpers\FormationHelper.cs" />
     <Compile Include="Strategy\MagicConstants.cs" />

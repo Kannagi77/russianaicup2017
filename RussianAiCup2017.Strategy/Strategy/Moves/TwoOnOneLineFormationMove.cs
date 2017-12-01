@@ -55,7 +55,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			{
 				if (xTanksArrvs)
 				{
-					CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, VehicleType.Ifv),
+					CommandManager.EnqueueCommand(new SelectAllCommand(world, VehicleType.Ifv),
 						world.TickIndex);
 					var moveCommand = new MoveCommand(ifvs.Select(v => v.Id).ToList(), centerOfTanks.X - centerOfIfvs.X, 0);
 					CommandManager.EnqueueCommand(moveCommand, world.TickIndex);
@@ -63,7 +63,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				}
 				else if (xArrvsIfvs)
 				{
-					CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, VehicleType.Tank),
+					CommandManager.EnqueueCommand(new SelectAllCommand(world, VehicleType.Tank),
 						world.TickIndex);
 					var moveCommand = new MoveCommand(tanks.Select(v => v.Id).ToList(), centerOfArrvs.X - centerOfTanks.X, 0);
 					CommandManager.EnqueueCommand(moveCommand, world.TickIndex);
@@ -72,7 +72,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				}
 				else
 				{
-					CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, VehicleType.Arrv),
+					CommandManager.EnqueueCommand(new SelectAllCommand(world, VehicleType.Arrv),
 						world.TickIndex);
 					var moveCommand = new MoveCommand(arrvs.Select(v => v.Id).ToList(), centerOfTanks.X - centerOfArrvs.X, 0);
 					CommandManager.EnqueueCommand(moveCommand, world.TickIndex);
@@ -83,7 +83,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 			{
 				if (yTanksArrvs)
 				{
-					CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, VehicleType.Ifv),
+					CommandManager.EnqueueCommand(new SelectAllCommand(world, VehicleType.Ifv),
 						world.TickIndex);
 					var moveCommand = new MoveCommand(ifvs.Select(v => v.Id).ToList(), 0, centerOfTanks.Y - centerOfIfvs.Y);
 					CommandManager.EnqueueCommand(moveCommand, world.TickIndex);
@@ -91,7 +91,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				}
 				else if (yArrvsIfvs)
 				{
-					CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, VehicleType.Tank),
+					CommandManager.EnqueueCommand(new SelectAllCommand(world, VehicleType.Tank),
 						world.TickIndex);
 					var moveCommand = new MoveCommand(tanks.Select(v => v.Id).ToList(), 0, centerOfArrvs.Y - centerOfTanks.Y);
 					CommandManager.EnqueueCommand(moveCommand, world.TickIndex);
@@ -99,7 +99,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				}
 				else
 				{
-					CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, VehicleType.Arrv),
+					CommandManager.EnqueueCommand(new SelectAllCommand(world, VehicleType.Arrv),
 						world.TickIndex);
 					var moveCommand = new MoveCommand(arrvs.Select(v => v.Id).ToList(), 0, centerOfTanks.Y - centerOfArrvs.Y);
 					CommandManager.EnqueueCommand(moveCommand, world.TickIndex);

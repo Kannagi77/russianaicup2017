@@ -50,7 +50,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 				: leftGroupType == VehicleType.Arrv
 					? arrvs
 					: ifvs;
-			CommandManager.EnqueueCommand(new SelectCommand(0, 0, world.Width, world.Height, leftGroupType), world.TickIndex);
+			CommandManager.EnqueueCommand(new SelectAllCommand(world, leftGroupType), world.TickIndex);
 			var command = new MoveCommand(leftGroup.Select(v => v.Id).ToList(), MagicConstants.InitialGapSize, 0);
 			CommandManager.EnqueueCommand(command, world.TickIndex);
 			commands.Add(command);
