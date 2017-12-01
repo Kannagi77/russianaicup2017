@@ -18,6 +18,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			VehicleRegistry.Update(world, me, game);
 #if DEBUG
 			RewindClient.Instance.Message($"Commands queue size: {CommandManager.GetCurrentQueueSize()}; ");
+			RewindClient.Instance.Message($"My points: {world.GetMyPlayer().Score}; ");
+			RewindClient.Instance.Message($"Opponent points: {world.GetOpponentPlayer().Score}; ");
 			if (!isGridDrawn)
 			{
 				DrawGrid(world);
