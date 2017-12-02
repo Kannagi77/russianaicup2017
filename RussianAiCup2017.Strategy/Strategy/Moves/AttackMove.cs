@@ -146,7 +146,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Moves
 		{
 			return myVehicles
 				.Where(v => VehicleRegistry.GetVision(v.Id, world, game) >= v.GetDistanceTo(target))
-				.OrderBy(v => v.Durability)
+				.OrderByDescending(v => v.Durability)
 				.FirstOrDefault();
 		}
 
