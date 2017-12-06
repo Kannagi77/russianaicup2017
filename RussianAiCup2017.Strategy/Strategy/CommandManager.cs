@@ -22,7 +22,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		public void ClearCommandsQueue(int formationId)
 		{
 			if (commandQueues.ContainsKey(formationId))
+			{
 				commandQueues[formationId].Clear();
+				if (lockedFormationId == formationId)
+					lockedFormationId = 0;
+			}
 		}
 
 		public Command PeekCommand(int formationId)

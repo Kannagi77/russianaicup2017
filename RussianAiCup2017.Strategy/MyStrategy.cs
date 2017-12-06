@@ -41,7 +41,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			if (unusedFacilities.Any())
 			{
 				var facility = unusedFacilities.First();
-				CommandManager.EnqueueCommand(new SetProductionCommand(facility.Id, VehicleType.Helicopter));
+				CommandManager.EnqueueCommand(new SetProductionCommand(facility.Id, VehicleType.Tank));
 				return;
 			}
 			var nextTickFormations = new List<IVehicleFormation>();
