@@ -62,7 +62,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				.GetCenterPoint();
 			if (TimeToRetreat(myVehicles))
 			{
-				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 50)
+				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 5)
 				{
 					myArmy
 						.Select(MagicConstants.AirFormationGroupId)
