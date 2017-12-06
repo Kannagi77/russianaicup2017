@@ -17,6 +17,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		private const int DbscanMinimumClusterSize = 3;
 		private List<long> cachedTargetGroup;
 		private int lastClusteringTick;
+		private double maximumDurabilityTolerance = 0.75;
 
 		public AttackAirVehicleFormation(int id,
 			IEnumerable<long> vehicleIds,
@@ -54,13 +55,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				return new VehicleFormationResult(this);
 
 			Vector2D direction;
-			if (myVehicles.Count < 100)
+			var myGroudForcesCenter = VehicleRegistry
+				.MyVehicles(me)
+				.Where(v => v.Type == VehicleType.Tank || v.Type == VehicleType.Arrv || v.Type == VehicleType.Ifv)
+				.ToList()
+				.GetCenterPoint();
+			if (TimeToRetreat(myVehicles))
 			{
-				var myGroudForcesCenter = VehicleRegistry
-					.MyVehicles(me)
-					.Where(v => v.Type == VehicleType.Tank || v.Type == VehicleType.Arrv || v.Type == VehicleType.Ifv)
-					.ToList()
-					.GetCenterPoint();
 				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 50)
 				{
 					myArmy
@@ -77,6 +78,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 
 				direction = myVehicles.GetMinimumDistanceTo(nextTargetGroupCenter) > 0.8 * game.HelicopterVisionRange
 					  || nextTargetGroup.Count < VehicleIds.Count / 2 - 1
+					  || myGroudForcesCenter.GetDistanceTo(nextTargetGroupCenter) < myGroudForcesCenter.GetDistanceTo(myArmy.Center)
 						? myArmy.Center.To(nextTargetGroupCenter)
 						: nextTargetGroupCenter.To(myArmy.Center);
 			}
@@ -89,6 +91,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 					game.HelicopterSpeed * game.RainWeatherSpeedFactor);
 			commands.Add(CommandManager.PeekLastCommand(Id));
 			return new VehicleFormationResult(this);
+		}
+
+		private bool TimeToRetreat(IReadOnlyCollection<Vehicle> vehicles)
+		{
+			var totalDurability = vehicles.Sum(v => v.MaxDurability);
+			var currentDurability = vehicles.Sum(v => v.Durability);
+			return vehicles.Count < 150 || currentDurability / (double) totalDurability < maximumDurabilityTolerance;
 		}
 
 		private List<long> NextTargetGroup(VehiclesGroup myArmy, World world, Player me)
