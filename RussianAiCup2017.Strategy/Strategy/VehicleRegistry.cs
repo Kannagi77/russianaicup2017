@@ -11,12 +11,15 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		private const int CellSize = 32;
 		private readonly Dictionary<long, Vehicle> vehiclesByIds = new Dictionary<long, Vehicle>();
 		private readonly HashSet<long> idleVehicleIds = new HashSet<long>();
+		private readonly HashSet<long> newCreatedVehicles = new HashSet<long>();
+		private readonly Dictionary<int, List<long>> vehicleIdsByFormationId = new Dictionary<int, List<long>>();
 
 		public void Update(World world, Player me, Game game)
 		{
 			foreach (var vehicle in world.NewVehicles)
 			{
 				vehiclesByIds.Add(vehicle.Id, vehicle);
+				newCreatedVehicles.Add(vehicle.Id);
 			}
 			var updates = world.VehicleUpdates;
 			foreach (var update in updates)
@@ -106,6 +109,30 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return world.Facilities
 				.Where(f => f.OwnerPlayerId == me.Id && f.Type == FacilityType.VehicleFactory && f.VehicleType == null)
 				.ToList();
+		}
+
+		public IEnumerable<long> GetNewCreatedVehicleIds()
+		{
+			return newCreatedVehicles;
+		}
+
+		public void RemoveFromNewVehicles(IEnumerable<long> ids)
+		{
+			foreach (var id in ids)
+			{
+				if (newCreatedVehicles.Contains(id))
+					newCreatedVehicles.Remove(id);
+			}
+		}
+
+		public void RegisterNewFormation(int formationId, List<long> vehicleIds)
+		{
+			vehicleIdsByFormationId.Add(formationId, vehicleIds);
+		}
+
+		public IEnumerable<long> GetVehicleIdsByFormationId(int formationId)
+		{
+			return vehicleIdsByFormationId.Where(p => p.Key == formationId).SelectMany(p => p.Value);
 		}
 
 		private double GetVisionCoefficient(Vehicle vehicle, World world, Game game)

@@ -7,5 +7,6 @@
 		public const double InitialGapSize = InitialGroupSize + 20.0;
 		public const int GroundFormationGroupId = 1;
 		public const int AirFormationGroupId = 2;
+		public static int NextFormationId = 3;
 	}
 }

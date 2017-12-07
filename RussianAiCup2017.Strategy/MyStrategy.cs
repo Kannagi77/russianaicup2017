@@ -51,6 +51,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 				nextTickFormations.AddRange(result.NewFormations);
 			}
 			formations = nextTickFormations;
+			TryIntroduceNewFormations();
 		}
 
 		private static void InitFormations(Player me)
@@ -69,6 +70,26 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 					.Select(v => v.Id)
 					.ToList(),
 				CommandManager, VehicleRegistry));
+			VehicleRegistry.RemoveFromNewVehicles(VehicleRegistry.MyVehicleIds(me));
+		}
+
+		private static void TryIntroduceNewFormations()
+		{
+			var newVehicleIds = VehicleRegistry
+				.GetNewCreatedVehicleIds()
+				.ToList();
+			if (!newVehicleIds.Any())
+				return;
+			var newVehicles = VehicleRegistry.GetVehiclesByIds(newVehicleIds);
+			var clusters = Dbscan.Cluster(newVehicles, 80, 10);
+			if (!clusters.Any())
+				return;
+			foreach (var cluster in clusters)
+			{
+				var ids = cluster.Select(v => v.Id).ToList();
+				formations.Add(new NewVehiclesFormation(MagicConstants.NextFormationId++, ids, CommandManager, VehicleRegistry));
+				VehicleRegistry.RemoveFromNewVehicles(ids);
+			}
 		}
 
 #if DEBUG

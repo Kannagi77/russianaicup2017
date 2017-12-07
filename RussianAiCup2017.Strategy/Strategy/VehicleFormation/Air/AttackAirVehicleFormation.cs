@@ -55,14 +55,13 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				return new VehicleFormationResult(this);
 
 			Vector2D direction;
-			var myGroudForcesCenter = VehicleRegistry
-				.MyVehicles(me)
-				.Where(v => v.Type == VehicleType.Tank || v.Type == VehicleType.Arrv || v.Type == VehicleType.Ifv)
+			var myGroudForcesCenter = VehicleRegistry.GetVehiclesByIds(
+					VehicleRegistry.GetVehicleIdsByFormationId(MagicConstants.GroundFormationGroupId))
 				.ToList()
 				.GetCenterPoint();
 			if (TimeToRetreat(myVehicles))
 			{
-				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 5)
+				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 10)
 				{
 					myArmy
 						.Select(MagicConstants.AirFormationGroupId)

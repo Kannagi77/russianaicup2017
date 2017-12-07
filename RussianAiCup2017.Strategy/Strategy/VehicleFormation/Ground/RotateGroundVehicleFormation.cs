@@ -59,6 +59,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			myArmy
 				.SelectVehicles()
 				.Assign(MagicConstants.GroundFormationGroupId);
+			VehicleRegistry.RegisterNewFormation(Id, VehicleIds);
 			binded = true;
 		}
 	}

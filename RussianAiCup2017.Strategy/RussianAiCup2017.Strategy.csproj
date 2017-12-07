@@ -119,6 +119,7 @@
     <Compile Include="Runner.cs" />
     <Compile Include="Strategy\VehicleFormation\Air\InitialAirVehicleFormation.cs" />
     <Compile Include="Strategy\VehicleFormation\Ground\InitialGroundVehicleFormation.cs" />
+    <Compile Include="Strategy\VehicleFormation\Ground\NewVehiclesFormation.cs" />
     <Compile Include="Strategy\VehicleFormation\Ground\RotateGroundVehicleFormation.cs" />
     <Compile Include="Strategy\VehicleFormation\Ground\ShrinkGroundVehicleFormation.cs" />
     <Compile Include="Strategy\VehicleFormation\Ground\TwoOnOneLineVehicleFormation.cs" />
