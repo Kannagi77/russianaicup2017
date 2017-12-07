@@ -41,8 +41,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			if (unusedFacilities.Any())
 			{
 				var facility = unusedFacilities.First();
-				CommandManager.EnqueueCommand(new SetProductionCommand(facility.Id, VehicleType.Tank));
-				return;
+				if (!AnyVehiclesNearFacility(facility, VehicleRegistry.MyVehicles(me), game))
+				{
+					CommandManager.EnqueueCommand(new SetProductionCommand(facility.Id, VehicleType.Tank));
+					return;
+				}
 			}
 			var nextTickFormations = new List<IVehicleFormation>();
 			foreach (var formation in formations)
@@ -52,6 +55,15 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			}
 			formations = nextTickFormations;
 			TryIntroduceNewFormations();
+		}
+
+		private bool AnyVehiclesNearFacility(Facility facility, IEnumerable<Vehicle> vehicles, Game game)
+		{
+			return vehicles
+				.Any(v => v.X > facility.Left - game.FacilityWidth / 2
+			                           && v.X < facility.Left + game.FacilityWidth / 2
+			                           && v.Y > facility.Top - game.FacilityHeight / 2
+			                           && v.Y < facility.Top + game.FacilityHeight / 2);
 		}
 
 		private static void InitFormations(Player me)
