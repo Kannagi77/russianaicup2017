@@ -19,7 +19,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			foreach (var vehicle in world.NewVehicles)
 			{
 				vehiclesByIds.Add(vehicle.Id, vehicle);
-				if (world.TickIndex != 0)
+				if (world.TickIndex != 0 && vehicle.PlayerId == me.Id)
 					newCreatedVehicles.Add(vehicle.Id);
 			}
 			var updates = world.VehicleUpdates;
