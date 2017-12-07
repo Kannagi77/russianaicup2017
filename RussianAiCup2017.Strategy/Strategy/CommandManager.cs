@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
@@ -7,6 +8,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 {
 	public class CommandManager
 	{
+		private readonly Random rnd = new Random();
 		private readonly Dictionary<int, Queue<Command>> commandQueues = new Dictionary<int, Queue<Command>>();
 		private bool forcePlayNextCommand;
 		private int lockedFormationId;
@@ -45,9 +47,16 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 
 		public bool PlayCommandIfPossible(VehicleRegistry registry, Player player, Move move, int worldTick)
 		{
+			if (!commandQueues.Any())
+				return false;
 			return lockedFormationId != 0
 				? PlayFormationCommandIfPossible(commandQueues[lockedFormationId], registry, player, move, worldTick)
-				: commandQueues.Any(p => PlayFormationCommandIfPossible(p.Value, registry, player, move, worldTick));
+				: commandQueues.Any(t => PlayFormationCommandIfPossible(commandQueues.ElementAt(GetNextQueueId()).Value, registry, player, move, worldTick));
+		}
+
+		private int GetNextQueueId()
+		{
+			return lockedFormationId != 0 ? lockedFormationId : rnd.Next(commandQueues.Count);
 		}
 
 		private bool PlayFormationCommandIfPossible(Queue<Command> formationQueue,

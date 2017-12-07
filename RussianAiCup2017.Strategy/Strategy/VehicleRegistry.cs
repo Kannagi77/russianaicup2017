@@ -19,7 +19,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			foreach (var vehicle in world.NewVehicles)
 			{
 				vehiclesByIds.Add(vehicle.Id, vehicle);
-				newCreatedVehicles.Add(vehicle.Id);
+				if (world.TickIndex != 0)
+					newCreatedVehicles.Add(vehicle.Id);
 			}
 			var updates = world.VehicleUpdates;
 			foreach (var update in updates)
@@ -58,6 +59,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 						vehicle.Y + game.VehicleRadius,
 						Color.Crimson);
 				}
+			}
+			foreach (var facility in world.Facilities)
+			{
+				RewindClient.Instance.Rectangle(facility.Left - game.FacilityWidth / 2,
+					facility.Top - game.FacilityHeight / 2,
+					facility.Left + game.FacilityWidth / 2,
+					facility.Top + game.FacilityHeight / 2,
+					facility.OwnerPlayerId == world.GetMyPlayer().Id
+						? Color.Yellow
+						: facility.OwnerPlayerId == world.GetOpponentPlayer().Id
+							? Color.Red
+							: Color.Gray);
 			}
 			RewindClient.Instance.End();
 #endif

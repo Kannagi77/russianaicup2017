@@ -32,6 +32,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var myArmy = new VehiclesGroup(Id, VehicleIds, VehicleRegistry, CommandManager);
 			commands.RemoveAll(c => c.IsStarted() && c.IsFinished(world.TickIndex, VehicleRegistry));
 
+			if (commands.Any())
+				return new VehicleFormationResult(this);
+
 			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()))
 			{
 				commands.Clear();
@@ -39,9 +42,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				this.PreventNuke(myArmy, world, game, commands);
 				return new VehicleFormationResult(this);
 			}
-
-			if (commands.Any())
-				return new VehicleFormationResult(this);
 
 			var myVehicles = VehicleRegistry.GetVehiclesByIds(VehicleIds).ToList();
 
@@ -55,10 +55,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				return new VehicleFormationResult(this);
 
 			Vector2D direction;
-			var myGroudForcesCenter = VehicleRegistry.GetVehiclesByIds(
+			var groundFormationVehicles = VehicleRegistry.GetVehiclesByIds(
 					VehicleRegistry.GetVehicleIdsByFormationId(MagicConstants.GroundFormationGroupId))
-				.ToList()
-				.GetCenterPoint();
+				.ToList();
+			var myGroudForcesCenter = groundFormationVehicles.Any()
+				? groundFormationVehicles.GetCenterPoint()
+				: new Point2D(0, 0);
 			if (TimeToRetreat(myVehicles))
 			{
 				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 10)

@@ -31,6 +31,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var myArmy = new VehiclesGroup(Id, VehicleIds, VehicleRegistry, CommandManager);
 			commands.RemoveAll(c => c.IsStarted() && c.IsFinished(world.TickIndex, VehicleRegistry));
 
+			if (commands.Any())
+				return new VehicleFormationResult(this);
+
 			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()))
 			{
 				commands.Clear();
@@ -38,9 +41,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				this.PreventNuke(myArmy, world, game, commands);
 				return new VehicleFormationResult(this);
 			}
-
-			if (commands.Any())
-				return new VehicleFormationResult(this);
 
 			var myVehicles = VehicleRegistry.GetVehiclesByIds(VehicleIds).ToList();
 
