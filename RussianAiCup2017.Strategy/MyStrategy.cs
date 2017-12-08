@@ -93,7 +93,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			if (!newVehicleIds.Any())
 				return;
 			var newVehicles = VehicleRegistry.GetVehiclesByIds(newVehicleIds);
-			var clusters = Dbscan.Cluster(newVehicles, 80, 10);
+			var clusters = Dbscan.Cluster(newVehicles, 80, 30);
 			if (!clusters.Any())
 				return;
 			foreach (var cluster in clusters)
