@@ -10,6 +10,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 	public class NewVehiclesFormation : VehicleFormationBase
 	{
 		private readonly List<Command> commands = new List<Command>();
+		private const double DbscanRadius = 15;
+		private const int DbscanMinimumClusterSize = 3;
 		private bool binded;
 		public NewVehiclesFormation(int id,
 			IEnumerable<long> vehicleIds,
@@ -49,6 +51,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 					VehicleRegistry.GetVehicleIdsByFormationId(MagicConstants.GroundFormationGroupId))
 				.ToList()
 				.GetCenterPoint();
+			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
+
+			var enemies = Dbscan.GetEnemiesClusters(enemyVehicles, DbscanRadius, DbscanMinimumClusterSize, world.TickIndex);
+			var nearestEnemy = enemies.OrderBy(c => c.GetCenterPoint().GetDistanceTo(army.Center)).FirstOrDefault();
+			if (nearestEnemy != null && army.Center.GetDistanceTo(nearestEnemy.GetCenterPoint()) < game.TankVisionRange * 0.8)
+			{
+				army
+					.Select(Id)
+					.MoveByVector(nearestEnemy.GetCenterPoint().To(army.Center), game.TankSpeed);
+				commands.Add(CommandManager.PeekLastCommand(Id));
+				return new VehicleFormationResult(this);
+			}
 			var nextTarget = closestUncapturedFacility?.ToPoint(game) ?? myGroudForcesCenter;
 			if (army.Center.GetDistanceTo(myGroudForcesCenter) < MagicConstants.NewVehiclesJoinRadius)
 			{
@@ -63,7 +77,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				.MoveByVector(direction.Length() > 20
 						? direction.Mul(0.1)
 						: direction,
-					game.TankSpeed * game.ForestTerrainSpeedFactor);
+					game.TankSpeed);
 #if DEBUG
 			RewindClient.Instance.Line(army.Center.X, army.Center.Y, nextTarget.X, nextTarget.Y, Color.Fuchsia);
 #endif
