@@ -89,7 +89,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		{
 			myArmy
 				.SelectVehicles()
-				.Assign(Id);
+				.Assign(Id)
+				.Scale(0.1);
 			VehicleRegistry.RegisterNewFormation(Id, VehicleIds);
 			binded = true;
 		}

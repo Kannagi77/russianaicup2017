@@ -62,10 +62,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			}
 			foreach (var facility in world.Facilities)
 			{
-				RewindClient.Instance.Rectangle(facility.Left - game.FacilityWidth / 2,
-					facility.Top - game.FacilityHeight / 2,
-					facility.Left + game.FacilityWidth / 2,
-					facility.Top + game.FacilityHeight / 2,
+				RewindClient.Instance.Rectangle(facility.Left,
+					facility.Top,
+					facility.Left + game.FacilityWidth,
+					facility.Top + game.FacilityHeight,
 					facility.OwnerPlayerId == world.GetMyPlayer().Id
 						? Color.Yellow
 						: facility.OwnerPlayerId == world.GetOpponentPlayer().Id
