@@ -61,14 +61,27 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				: new Point2D(0, 0);
 			if (TimeToRetreat(myVehicles))
 			{
-				if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 10)
+				var ifvs = groundFormationVehicles.Where(v => v.Type == VehicleType.Ifv).ToList();
+				if (ifvs.Any())
 				{
-					myArmy
-						.Select(MagicConstants.AirFormationGroupId)
-						.Assign(MagicConstants.GroundFormationGroupId);
-					return new VehicleFormationResult();
+					var ifvsCenter = ifvs.GetCenterPoint();
+					if (myArmy.Center.GetDistanceTo(ifvsCenter) < 10)
+					{
+						return new VehicleFormationResult(this);
+					}
+					direction = myArmy.Center.To(ifvsCenter);
 				}
-				direction = myArmy.Center.To(myGroudForcesCenter);
+				else
+				{
+					if (myArmy.Center.GetDistanceTo(myGroudForcesCenter) < 10)
+					{
+						myArmy
+							.Select(MagicConstants.AirFormationGroupId)
+							.Assign(MagicConstants.GroundFormationGroupId);
+						return new VehicleFormationResult();
+					}
+					direction = myArmy.Center.To(myGroudForcesCenter);
+				}
 			}
 			else
 			{
@@ -99,7 +112,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		{
 			var totalDurability = vehicles.Sum(v => v.MaxDurability);
 			var currentDurability = vehicles.Sum(v => v.Durability);
-			return vehicles.Count < 150 || currentDurability / (double) totalDurability < maximumDurabilityTolerance;
+			return currentDurability / (double) totalDurability < maximumDurabilityTolerance;
 		}
 
 		private List<long> NextTargetGroup(VehiclesGroup myArmy, World world, Player me)
