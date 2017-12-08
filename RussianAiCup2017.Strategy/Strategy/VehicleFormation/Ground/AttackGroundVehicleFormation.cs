@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
@@ -76,7 +74,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me)
 					.OrderBy(f => myArmy.Center.GetDistanceTo(f.ToPoint(game)))
 					.FirstOrDefault();
-				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles)?.ToList();
+				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles, world.TickIndex)?.ToList();
 				if (nextEnemyGroup != null)
 				{
 					cachedTargetGroup = nextEnemyGroup.Select(v => v.Id).ToList();
@@ -105,26 +103,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			}
 		}
 
-		private static IEnumerable<Vehicle> NextEnemyGroup(Point2D myArmyCenter, List<Vehicle> enemyVehicles)
+		private static IEnumerable<Vehicle> NextEnemyGroup(Point2D myArmyCenter, List<Vehicle> enemyVehicles, int tick)
 		{
-#if DEBUG
-			var stopwatch = new Stopwatch();
-			stopwatch.Start();
-#endif
-			var clusters = Dbscan.Cluster(enemyVehicles, DbscanRadius, DbscanMinimumClusterSize);
-#if DEBUG
-			stopwatch.Stop();
-			RewindClient.Instance.Message($"Clustering time: {stopwatch.Elapsed}");
-			Console.WriteLine($"Clustering time: {stopwatch.Elapsed}");
-			foreach (var cluster in clusters)
-			{
-				var x1 = cluster.Select(v => v.X).Min();
-				var y1 = cluster.Select(v => v.Y).Min();
-				var x2 = cluster.Select(v => v.X).Max();
-				var y2 = cluster.Select(v => v.Y).Max();
-				RewindClient.Instance.Rectangle(x1, y1, x2, y2, Color.Yellow);
-			}
-#endif
+			var clusters = Dbscan.GetEnemiesClusters(enemyVehicles, DbscanRadius, DbscanMinimumClusterSize, tick);
 			return clusters.OrderBy(c => c.GetCenterPoint().GetDistanceTo(myArmyCenter)).FirstOrDefault();
 		}
 	}

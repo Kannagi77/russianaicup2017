@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 
@@ -7,8 +9,25 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 	//note: uses poorly implemented DBSCAN algorithm
 	public static class Dbscan
 	{
+		private static int lastClusteringTick;
+		public static List<List<Vehicle>> LastCacheResult = new List<List<Vehicle>>();
+
+		public static List<List<Vehicle>> GetEnemiesClusters(List<Vehicle> vehicles, double radius, int minimumClusterSize, int tick)
+		{
+			if (tick - lastClusteringTick > MagicConstants.EnemiesClusteringRate)
+			{
+				LastCacheResult = Cluster(vehicles, radius, minimumClusterSize);
+				lastClusteringTick = tick;
+			}
+			return LastCacheResult;
+		}
+
 		public static List<List<Vehicle>> Cluster(List<Vehicle> vehicles, double radius, int minimumClusterSize)
 		{
+#if DEBUG
+			var stopwatch = new Stopwatch();
+			stopwatch.Start();
+#endif
 			var unitsByX = new Dictionary<int, HashSet<Vehicle>>();
 			var unitsByY = new Dictionary<int, HashSet<Vehicle>>();
 			foreach (var vehicle in vehicles)
@@ -64,6 +83,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 
 				clusters.Add(currentCluster.ToList());
 			}
+#if DEBUG
+			stopwatch.Stop();
+			RewindClient.Instance.Message($"Clustering time: {stopwatch.Elapsed}");
+			foreach (var cluster in clusters)
+			{
+				var x1 = cluster.Select(v => v.X).Min();
+				var y1 = cluster.Select(v => v.Y).Min();
+				var x2 = cluster.Select(v => v.X).Max();
+				var y2 = cluster.Select(v => v.Y).Max();
+				RewindClient.Instance.Rectangle(x1, y1, x2, y2, Color.Yellow);
+			}
+#endif
 			return clusters;
 		}
 
