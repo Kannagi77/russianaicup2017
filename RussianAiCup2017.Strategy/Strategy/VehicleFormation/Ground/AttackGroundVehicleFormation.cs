@@ -16,6 +16,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		private Point2D cachedTarget;
 		private List<long> cachedTargetGroup;
 		private int lastClusteringTick;
+		private int nukePreventionTick;
 		public AttackGroundVehicleFormation(int id,
 			IEnumerable<long> vehicleIds,
 			CommandManager commandManager,
@@ -32,11 +33,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			if (commands.Any())
 				return new VehicleFormationResult(this);
 
-			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()))
+			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()) && world.TickIndex - nukePreventionTick > game.TacticalNuclearStrikeDelay)
 			{
 				commands.Clear();
 				CommandManager.ClearCommandsQueue(Id);
 				this.PreventNuke(myArmy, world, game, commands);
+				nukePreventionTick = world.TickIndex;
 				return new VehicleFormationResult(this);
 			}
 

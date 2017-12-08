@@ -13,6 +13,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		private readonly List<Command> commands = new List<Command>();
 		private const double DbscanRadius = 15;
 		private const int DbscanMinimumClusterSize = 3;
+		private int nukePreventionTick;
 		private bool binded;
 		public NewVehiclesFormation(int id,
 			IEnumerable<long> vehicleIds,
@@ -34,11 +35,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			commands.RemoveAll(c => c.IsStarted() && c.IsFinished(world.TickIndex, VehicleRegistry));
 
 
-			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()))
+			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()) && world.TickIndex - nukePreventionTick > game.TacticalNuclearStrikeDelay)
 			{
 				commands.Clear();
 				CommandManager.ClearCommandsQueue(Id);
 				this.PreventNuke(army, world, game, commands);
+				nukePreventionTick = world.TickIndex;
 				return new VehicleFormationResult(this);
 			}
 
