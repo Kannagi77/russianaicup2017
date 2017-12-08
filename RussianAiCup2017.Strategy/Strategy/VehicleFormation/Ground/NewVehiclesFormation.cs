@@ -4,6 +4,7 @@ using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers;
+using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Air;
 
 namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.Ground
 {
@@ -55,7 +56,16 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 
 			var enemies = Dbscan.GetEnemiesClusters(enemyVehicles, DbscanRadius, DbscanMinimumClusterSize, world.TickIndex);
 			var nearestEnemy = enemies.OrderBy(c => c.GetCenterPoint().GetDistanceTo(army.Center)).FirstOrDefault();
-			if (nearestEnemy != null && army.Center.GetDistanceTo(nearestEnemy.GetCenterPoint()) < game.TankVisionRange * 0.8)
+
+			if (nearestEnemy != null
+			    && this.TryNuke(army, VehicleRegistry.GetVehiclesByIds(army.VehicleIds), nearestEnemy, me, game, world, commands))
+			{
+				return new VehicleFormationResult(new ShrinkAirVehicleFormation(Id, VehicleIds, CommandManager, VehicleRegistry));
+			}
+
+			if (nearestEnemy != null
+				&& army.Center.GetDistanceTo(nearestEnemy.GetCenterPoint()) < game.TankVisionRange * 0.8
+				&& nearestEnemy.Count > 1.2 * VehicleIds.Count)
 			{
 				army
 					.Select(Id)
