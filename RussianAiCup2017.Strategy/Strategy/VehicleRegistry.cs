@@ -67,10 +67,22 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 					facility.Left + game.FacilityWidth,
 					facility.Top + game.FacilityHeight,
 					facility.OwnerPlayerId == world.GetMyPlayer().Id
-						? Color.Yellow
+						? Color.Blue
 						: facility.OwnerPlayerId == world.GetOpponentPlayer().Id
 							? Color.Red
 							: Color.Gray);
+			}
+			if (me.NextNuclearStrikeVehicleId != -1)
+			{
+				var gunner = GetVehicleById(me.NextNuclearStrikeVehicleId);
+				RewindClient.Instance.Circle(gunner.X, gunner.Y, game.VehicleRadius + 5, Color.DarkBlue);
+				RewindClient.Instance.Circle(me.NextNuclearStrikeX, me.NextNuclearStrikeY, game.TacticalNuclearStrikeRadius, Color.DarkBlue);
+			}
+			if (world.GetOpponentPlayer().NextNuclearStrikeVehicleId != -1)
+			{
+				var gunner = GetVehicleById(world.GetOpponentPlayer().NextNuclearStrikeVehicleId);
+				RewindClient.Instance.Circle(gunner.X, gunner.Y, game.VehicleRadius + 5, Color.DarkRed);
+				RewindClient.Instance.Circle(world.GetOpponentPlayer().NextNuclearStrikeX, world.GetOpponentPlayer().NextNuclearStrikeY, game.TacticalNuclearStrikeRadius, Color.DarkRed);
 			}
 			RewindClient.Instance.End();
 #endif

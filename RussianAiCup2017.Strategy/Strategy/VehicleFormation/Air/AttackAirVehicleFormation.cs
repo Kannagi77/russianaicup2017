@@ -27,6 +27,19 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 
 		public override VehicleFormationResult PerformAction(World world, Player me, Game game)
 		{
+#if DEBUG
+			if (cachedTargetGroup != null)
+			{
+				foreach (var cachedTarget in VehicleRegistry.GetVehiclesByIds(cachedTargetGroup))
+				{
+					RewindClient.Instance.Rectangle(cachedTarget.X - game.VehicleRadius,
+						cachedTarget.Y - game.VehicleRadius,
+						cachedTarget.X + game.VehicleRadius,
+						cachedTarget.Y + game.VehicleRadius,
+						Color.Pink);
+				}
+			}
+#endif
 			var myArmy = new VehiclesGroup(Id, VehicleIds, VehicleRegistry, CommandManager);
 			commands.RemoveAll(c => c.IsStarted() && c.IsFinished(world.TickIndex, VehicleRegistry));
 
@@ -61,6 +74,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				: new Point2D(0, 0);
 			if (TimeToRetreat(myVehicles))
 			{
+#if DEBUG
+				RewindClient.Instance.Message("=== TIME TO RETREAT! ===");
+#endif
 				var ifvs = groundFormationVehicles.Where(v => v.Type == VehicleType.Ifv).ToList();
 				if (ifvs.Any())
 				{
@@ -86,13 +102,33 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			else
 			{
 				var nextTargetGroup = NextTargetGroup(myArmy, world, me);
-				var nextTargetGroupCenter = VehicleRegistry.GetVehiclesByIds(nextTargetGroup).GetCenterPoint();
+				var nextTargetClosestPoint = VehicleRegistry.GetVehiclesByIds(nextTargetGroup).GetClosest(myGroudForcesCenter).ToPoint();
 
-				direction = myVehicles.GetMinimumDistanceTo(nextTargetGroupCenter) > 0.8 * game.HelicopterVisionRange
-					  || nextTargetGroup.Count < VehicleIds.Count / 2 - 1
-					  || myGroudForcesCenter.GetDistanceTo(nextTargetGroupCenter) < myGroudForcesCenter.GetDistanceTo(myArmy.Center)
-						? myArmy.Center.To(nextTargetGroupCenter)
-						: nextTargetGroupCenter.To(myArmy.Center);
+				var minimumDistanceToNextTargetCenter = myVehicles.GetMinimumDistanceTo(nextTargetClosestPoint);
+				var minimumDistanceToNextTargetCenterCondition = minimumDistanceToNextTargetCenter > 0.8 * game.HelicopterVisionRange;
+				var nextTargetGroupCount = nextTargetGroup.Count;
+				var myVehiclesCount = VehicleIds.Count;
+				var countCondition = nextTargetGroupCount < myVehiclesCount / 2 - 1;
+				var myForcesCenterToNextTargetCenterDistance = myGroudForcesCenter.GetDistanceTo(nextTargetClosestPoint);
+				var myGroundForcesToMyArmyCenterCondition = myGroudForcesCenter.GetDistanceTo(myArmy.Center);
+				var myGroundForcesCondition = myForcesCenterToNextTargetCenterDistance < myGroundForcesToMyArmyCenterCondition;
+
+#if DEBUG
+				RewindClient.Instance.Message($"=== minimumDistanceToNextTargetCenter = {minimumDistanceToNextTargetCenter} ===");
+				RewindClient.Instance.Message($"=== minimumDistanceToNextTargetCenterCondition = {minimumDistanceToNextTargetCenterCondition} ===");
+				RewindClient.Instance.Message($"=== nextTargetGroupCount = {nextTargetGroupCount} ===");
+				RewindClient.Instance.Message($"=== myVehiclesCount = {myVehiclesCount} ===");
+				RewindClient.Instance.Message($"=== countCondition = {countCondition} ===");
+				RewindClient.Instance.Message($"=== myForcesCenterToNextTargetCenterDistance = {myForcesCenterToNextTargetCenterDistance} ===");
+				RewindClient.Instance.Message($"=== myGroundForcesToMyArmyCenterCondition = {myGroundForcesToMyArmyCenterCondition} ===");
+				RewindClient.Instance.Message($"=== myGroundForcesCondition = {myGroundForcesCondition} ===");
+#endif
+
+				direction = minimumDistanceToNextTargetCenterCondition
+					  || countCondition
+					  || myGroundForcesCondition
+						? myArmy.Center.To(nextTargetClosestPoint)
+						: nextTargetClosestPoint.To(myArmy.Center);
 			}
 
 			myArmy

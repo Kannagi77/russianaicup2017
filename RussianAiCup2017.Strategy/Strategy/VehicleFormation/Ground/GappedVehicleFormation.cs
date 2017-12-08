@@ -38,23 +38,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var myVehicles = VehicleRegistry.MyVehicles(me);
 			var tanks = myVehicles.Where(v => v.Type == VehicleType.Tank).ToList();
 			var centerOfTanks = tanks.GetCenterPoint();
-#if DEBUG
-			RewindClient.Instance.Message($"{nameof(centerOfTanks)} = {centerOfTanks}; ");
-#endif
 
 			var arrvs = myVehicles.Where(v => v.Type == VehicleType.Arrv).ToList();
 			var centerOfArrvs = arrvs.GetCenterPoint();
 
-#if DEBUG
-			RewindClient.Instance.Message($"{nameof(centerOfArrvs)} = {centerOfArrvs}; ");
-#endif
-
 			var ifvs = myVehicles.Where(v => v.Type == VehicleType.Ifv).ToList();
 			var centerOfIfvs = ifvs.GetCenterPoint();
-
-#if DEBUG
-			RewindClient.Instance.Message($"{nameof(centerOfIfvs)} = {centerOfIfvs}; ");
-#endif
 
 			var xTanksArrvs = Math.Abs(centerOfTanks.X - centerOfArrvs.X) < MagicConstants.Eps;
 			var xArrvsIfvs = Math.Abs(centerOfArrvs.X - centerOfIfvs.X) < MagicConstants.Eps;
@@ -63,30 +52,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var yArrvsIfvs = Math.Abs(centerOfArrvs.Y - centerOfIfvs.Y) < MagicConstants.Eps;
 			var yTanksIfvs = Math.Abs(centerOfTanks.Y - centerOfIfvs.Y) < MagicConstants.Eps;
 
-#if DEBUG
-			RewindClient.Instance.Message($"{nameof(xTanksArrvs)} = {xTanksArrvs}; ");
-			RewindClient.Instance.Message($"{nameof(xArrvsIfvs)} = {xArrvsIfvs}; ");
-			RewindClient.Instance.Message($"{nameof(xTanksIfvs)} = {xTanksIfvs}; ");
-			RewindClient.Instance.Message($"{nameof(yTanksArrvs)} = {yTanksArrvs}; ");
-			RewindClient.Instance.Message($"{nameof(yArrvsIfvs)} = {yArrvsIfvs}; ");
-			RewindClient.Instance.Message($"{nameof(yTanksIfvs)} = {yTanksIfvs}; ");
-#endif
-
 			var xTanksArrvsGap = yTanksArrvs && Math.Abs(centerOfTanks.X - centerOfArrvs.X) > MagicConstants.InitialGapSize + MagicConstants.Eps;
 			var xArrvsIfvsGap = yArrvsIfvs && Math.Abs(centerOfArrvs.X - centerOfIfvs.X) > MagicConstants.InitialGapSize + MagicConstants.Eps;
 			var xTanksIfvsGap = yTanksIfvs && Math.Abs(centerOfTanks.X - centerOfIfvs.X) > MagicConstants.InitialGapSize + MagicConstants.Eps;
 			var yTanksArrvsGap = xTanksArrvs && Math.Abs(centerOfTanks.Y - centerOfArrvs.Y) > MagicConstants.InitialGapSize + MagicConstants.Eps;
 			var yArrvsIfvsGap = xArrvsIfvs && Math.Abs(centerOfArrvs.Y - centerOfIfvs.Y) > MagicConstants.InitialGapSize + MagicConstants.Eps;
 			var yTanksIfvsGap = xTanksIfvs && Math.Abs(centerOfTanks.Y - centerOfIfvs.Y) > MagicConstants.InitialGapSize + MagicConstants.Eps;
-
-#if DEBUG
-			RewindClient.Instance.Message($"{nameof(xTanksArrvsGap)} = {xTanksArrvsGap}; ");
-			RewindClient.Instance.Message($"{nameof(xArrvsIfvsGap)} = {xArrvsIfvsGap}; ");
-			RewindClient.Instance.Message($"{nameof(xTanksIfvsGap)} = {xTanksIfvsGap}; ");
-			RewindClient.Instance.Message($"{nameof(yTanksArrvsGap)} = {yTanksArrvsGap}; ");
-			RewindClient.Instance.Message($"{nameof(yArrvsIfvsGap)} = {yArrvsIfvsGap}; ");
-			RewindClient.Instance.Message($"{nameof(yTanksIfvsGap)} = {yTanksIfvsGap}; ");
-#endif
 
 			var arrvsGroup = new VehiclesGroup(Id, arrvs.Select(v => v.Id).ToList(), VehicleRegistry, CommandManager);
 			var ifvsGroup = new VehiclesGroup(Id, ifvs.Select(v => v.Id).ToList(), VehicleRegistry, CommandManager);

@@ -72,7 +72,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 				return false;
 			var currentCommand = formationQueue.Peek();
 #if DEBUG
-			RewindClient.Instance.Message($"Current command {currentCommand}");
+			RewindClient.Instance.Message($"=== Current command {currentCommand} ===");
 #endif
 			if (!currentCommand.IsStarted())
 			{
@@ -82,7 +82,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 				if (formationQueue.Count == 1 || IsSelectCommand(formationQueue.ElementAt(1)))
 					lockedFormationId = 0;
 #if DEBUG
-				RewindClient.Instance.Message($"Commiting command {currentCommand}");
+				RewindClient.Instance.Message($"=== Commiting command {currentCommand} ===");
 #endif
 			}
 			if (forcePlayNextCommand)
@@ -93,8 +93,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			if (currentCommand.CanBeParallel() || currentCommand.IsFinished(worldTick, registry))
 			{
 #if DEBUG
-				RewindClient.Instance.Message($"{currentCommand} {nameof(currentCommand.CanBeParallel)}:{currentCommand.CanBeParallel()}");
-				RewindClient.Instance.Message($"{currentCommand} {nameof(currentCommand.IsFinished)}:{currentCommand.IsFinished(worldTick, registry)}");
+				RewindClient.Instance.Message($"=== {currentCommand} {nameof(currentCommand.CanBeParallel)}:{currentCommand.CanBeParallel()} ===");
+				RewindClient.Instance.Message($"=== {currentCommand} {nameof(currentCommand.IsFinished)}:{currentCommand.IsFinished(worldTick, registry)} ===");
 #endif
 				forcePlayNextCommand = currentCommand.ForcePlayNextCommand;
 				formationQueue.Dequeue();
