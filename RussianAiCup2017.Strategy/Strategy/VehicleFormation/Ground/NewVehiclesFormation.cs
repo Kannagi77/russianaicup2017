@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Model;
 using Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands;
@@ -41,20 +42,6 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			if (commands.Any())
 				return new VehicleFormationResult(this);
 
-			var nextTarget = NextTarget(army, world, me, game);
-			var direction = army.Center.To(nextTarget);
-			army
-				.Select(Id)
-				.MoveByVector(direction.Length() > 20
-						? direction.Mul(0.1)
-						: direction,
-					game.TankSpeed * game.ForestTerrainSpeedFactor);
-			commands.Add(CommandManager.PeekLastCommand(Id));
-			return new VehicleFormationResult(this);
-		}
-
-		private Point2D NextTarget(VehiclesGroup army, World world, Player me, Game game)
-		{
 			var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me)
 				.OrderBy(f => army.Center.GetDistanceTo(f.ToPoint(game)))
 				.FirstOrDefault();
@@ -62,7 +49,26 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 					VehicleRegistry.GetVehicleIdsByFormationId(MagicConstants.GroundFormationGroupId))
 				.ToList()
 				.GetCenterPoint();
-			return closestUncapturedFacility?.ToPoint(game) ?? myGroudForcesCenter;
+			var nextTarget = closestUncapturedFacility?.ToPoint(game) ?? myGroudForcesCenter;
+			if (army.Center.GetDistanceTo(myGroudForcesCenter) < MagicConstants.NewVehiclesJoinRadius)
+			{
+				army
+					.Select(Id)
+					.Assign(MagicConstants.GroundFormationGroupId);
+				return new VehicleFormationResult();
+			}
+			var direction = army.Center.To(nextTarget);
+			army
+				.Select(Id)
+				.MoveByVector(direction.Length() > 20
+						? direction.Mul(0.1)
+						: direction,
+					game.TankSpeed * game.ForestTerrainSpeedFactor);
+#if DEBUG
+			RewindClient.Instance.Line(army.Center.X, army.Center.Y, nextTarget.X, nextTarget.Y, Color.Fuchsia);
+#endif
+			commands.Add(CommandManager.PeekLastCommand(Id));
+			return new VehicleFormationResult(this);
 		}
 
 		private void Bind(VehiclesGroup myArmy)

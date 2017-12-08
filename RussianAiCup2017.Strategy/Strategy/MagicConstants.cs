@@ -8,5 +8,6 @@
 		public const int GroundFormationGroupId = 1;
 		public const int AirFormationGroupId = 2;
 		public static int NextFormationId = 3;
+		public const int NewVehiclesJoinRadius = 50;
 	}
 }

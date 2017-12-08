@@ -61,6 +61,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 						? direction.Mul(0.1)
 						: direction,
 					game.TankSpeed * game.ForestTerrainSpeedFactor);
+#if DEBUG
+			RewindClient.Instance.Line(myArmy.Center.X, myArmy.Center.Y, nextTarget.X, nextTarget.Y, Color.Fuchsia);
+#endif
 			commands.Add(CommandManager.PeekLastCommand(Id));
 			return new VehicleFormationResult(this);
 		}
