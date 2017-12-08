@@ -56,7 +56,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 
 		private int GetNextQueueId()
 		{
-			return lockedFormationId != 0 ? lockedFormationId : rnd.Next(commandQueues.Count);
+			return rnd.Next(commandQueues.Count);
 		}
 
 		private bool PlayFormationCommandIfPossible(Queue<Command> formationQueue,
