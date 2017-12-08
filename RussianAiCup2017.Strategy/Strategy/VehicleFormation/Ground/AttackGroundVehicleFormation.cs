@@ -33,7 +33,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			if (commands.Any())
 				return new VehicleFormationResult(this);
 
-			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()) && world.TickIndex - nukePreventionTick > game.TacticalNuclearStrikeDelay)
+			if (FormationHelper.IsNukeAlert(world.GetOpponentPlayer()) && world.TickIndex - nukePreventionTick > game.BaseTacticalNuclearStrikeCooldown / 2)
 			{
 				commands.Clear();
 				CommandManager.ClearCommandsQueue(Id);
