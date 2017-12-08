@@ -44,7 +44,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers
 
 		public static Vehicle GetClosest(this IEnumerable<Vehicle> units, Point2D point)
 		{
-			return GetUnitsByDistance(units, point).OrderBy(p => p.Key).First().Value;
+			return GetUnitsByDistance(units, point).OrderBy(p => p.Key).FirstOrDefault().Value;
 		}
 
 		public static Vehicle GetClosestAtMinimumRange(this IEnumerable<Vehicle> units, Vehicle unit, double range)

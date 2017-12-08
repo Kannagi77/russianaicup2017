@@ -102,7 +102,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			else
 			{
 				var nextTargetGroup = NextTargetGroup(myArmy, world, me);
-				var nextTargetClosestPoint = VehicleRegistry.GetVehiclesByIds(nextTargetGroup).GetClosest(myGroudForcesCenter).ToPoint();
+				var closest = VehicleRegistry.GetVehiclesByIds(nextTargetGroup).GetClosest(myGroudForcesCenter);
+				var nextTargetClosestPoint = closest?.ToPoint() ?? new Point2D(0, 0);
 
 				var minimumDistanceToNextTargetCenter = myVehicles.GetMinimumDistanceTo(nextTargetClosestPoint);
 				var minimumDistanceToNextTargetCenterCondition = minimumDistanceToNextTargetCenter > 0.8 * game.HelicopterVisionRange;
