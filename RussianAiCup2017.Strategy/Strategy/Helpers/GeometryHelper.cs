@@ -39,7 +39,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Helpers
 
 		public static double GetMinimumDistanceTo(this IEnumerable<Vehicle> units, Point2D point)
 		{
-			return units.Select(u => u.GetDistanceTo(point)).OrderBy(d => d).First();
+			return units.Select(u => u.GetDistanceTo(point)).OrderBy(d => d).FirstOrDefault();
 		}
 
 		public static Vehicle GetClosest(this IEnumerable<Vehicle> units, Point2D point)
