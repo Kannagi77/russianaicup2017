@@ -109,7 +109,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 				|| command is SelectGroupCommand
 				|| command is SelectVehiclesCommand
 				|| command is AddToSelectionCommand
-				|| command is AddVehiclesToSelectionCommand;
+				|| command is AddVehiclesToSelectionCommand
+				|| command is ResetIdlenessCommand;
 		}
 
 		private static bool CanPlayCommand(Player player)

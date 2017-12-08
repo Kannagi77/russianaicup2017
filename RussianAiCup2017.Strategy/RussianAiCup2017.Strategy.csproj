@@ -93,6 +93,7 @@
     <Compile Include="IStrategy.cs" />
     <Compile Include="RewindClient.cs" />
     <Compile Include="Strategy\Commands\AddVehiclesToSelectionCommand.cs" />
+    <Compile Include="Strategy\Commands\ResetIdlenessCommand.cs" />
     <Compile Include="Strategy\Commands\SetProductionCommand.cs" />
     <Compile Include="Strategy\Commands\AddToSelectionCommand.cs" />
     <Compile Include="Strategy\Commands\AssignCommand.cs" />

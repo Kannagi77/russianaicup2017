@@ -35,7 +35,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var army = new VehiclesGroup(Id, VehicleIds, VehicleRegistry, CommandManager);
 			army
 				.Select(Id)
-				.MoveByVector(0, 1)
+				.ResetIdleness()
 				.Scale(0.1);
 			command = CommandManager.PeekLastCommand(Id) as ScaleCommand;
 		}

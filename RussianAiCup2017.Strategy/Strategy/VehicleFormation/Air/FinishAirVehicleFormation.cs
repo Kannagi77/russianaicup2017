@@ -7,7 +7,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 {
 	public class FinishAirVehicleFormation : VehicleFormationBase
 	{
-		private readonly List<MoveCommand> commands = new List<MoveCommand>();
+		private readonly List<Command> commands = new List<Command>();
 		private const double ScaleFactor = 1.5;
 
 		public FinishAirVehicleFormation(int id,
@@ -59,8 +59,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 
 			helicoptersGroup
 				.SelectVehicles(VehicleType.Helicopter)
-				.MoveByVector(0, 1)
+				.ResetIdleness()
 				.Scale(ScaleFactor);
+			commands.Add(CommandManager.PeekLastCommand(Id));
 
 			fightersGroup
 				.SelectVehicles(VehicleType.Fighter)
@@ -69,7 +70,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			helicoptersGroup
 				.SelectVehicles(VehicleType.Helicopter)
 				.MoveByVector(fightersToTheRight ? MagicConstants.InitialGapSize : -MagicConstants.InitialGapSize, 0);
-			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
+			commands.Add(CommandManager.PeekLastCommand(Id));
 		}
 	}
 }

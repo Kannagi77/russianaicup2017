@@ -75,6 +75,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return this;
 		}
 
+		public VehiclesGroup ResetIdleness()
+		{
+			commandManager.EnqueueCommand(new ResetIdlenessCommand(FormationId, VehicleIds));
+			return this;
+		}
+
 		public VehiclesGroup MergeWith(IEnumerable<long> anotherVehicleIds)
 		{
 			return new VehiclesGroup(FormationId, VehicleIds.Concat(anotherVehicleIds).ToList(), registry, commandManager);
