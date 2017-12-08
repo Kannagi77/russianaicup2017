@@ -28,6 +28,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return this;
 		}
 
+		public VehiclesGroup AddToSelectionVehicles(VehicleType? type = null)
+		{
+			commandManager.EnqueueCommand(new AddVehiclesToSelectionCommand(FormationId, VehicleIds, type));
+			return this;
+		}
+
 		public VehiclesGroup Select(int groupId)
 		{
 			commandManager.EnqueueCommand(new SelectGroupCommand(FormationId, groupId));

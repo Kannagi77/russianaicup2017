@@ -11,6 +11,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		private readonly double x2;
 		private readonly double y2;
 		private readonly VehicleType? type;
+		private readonly bool forcePlayNextCommand;
 		private bool isStarted;
 
 		public AddToSelectionCommand(int formationId, double x1, double y1, double x2, double y2)
@@ -18,9 +19,16 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 		{
 		}
 
-		public AddToSelectionCommand(int formationId, double x1, double y1, double x2, double y2, VehicleType? type)
+		public AddToSelectionCommand(int formationId,
+			double x1,
+			double y1,
+			double x2,
+			double y2,
+			VehicleType? type,
+			bool forcePlayNextCommand = false)
 		{
 			FormationId = formationId;
+			this.forcePlayNextCommand = forcePlayNextCommand;
 			this.x1 = x1;
 			this.y1 = y1;
 			this.x2 = x2;
@@ -57,6 +65,8 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.Commands
 
 			isStarted = true;
 		}
+
+		public override bool ForcePlayNextCommand => forcePlayNextCommand;
 
 #if DEBUG
 		public override string ToString()

@@ -53,21 +53,21 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var fightersToTheRight = fightersGroup.Center.X > helicoptersGroup.Center.X;
 
 			fightersGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Fighter)
 				.Scale(ScaleFactor)
 				.MoveByVector(0, 6);
 
 			helicoptersGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Helicopter)
 				.MoveByVector(0, 1)
 				.Scale(ScaleFactor);
 
 			fightersGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Fighter)
 				.MoveByVector(fightersToTheRight ? -MagicConstants.InitialGapSize : MagicConstants.InitialGapSize, 0, canBeParallel: true);
 
 			helicoptersGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Helicopter)
 				.MoveByVector(fightersToTheRight ? MagicConstants.InitialGapSize : -MagicConstants.InitialGapSize, 0);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 		}

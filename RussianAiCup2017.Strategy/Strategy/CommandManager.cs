@@ -105,7 +105,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 
 		private bool IsSelectCommand(Command command)
 		{
-			return command is SelectCommand || command is SelectGroupCommand || command is SelectVehiclesCommand;
+			return command is SelectCommand
+				|| command is SelectGroupCommand
+				|| command is SelectVehiclesCommand
+				|| command is AddToSelectionCommand
+				|| command is AddVehiclesToSelectionCommand;
 		}
 
 		private static bool CanPlayCommand(Player player)

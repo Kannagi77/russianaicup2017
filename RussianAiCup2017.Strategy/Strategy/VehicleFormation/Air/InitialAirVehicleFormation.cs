@@ -51,17 +51,15 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				VehicleRegistry,
 				CommandManager);
 
-			var leftPoint = new Point2D(MagicConstants.InitialGapSize * 4, MagicConstants.InitialGapSize * 5);
-			var rightPoint = new Point2D(MagicConstants.InitialGapSize * 6, MagicConstants.InitialGapSize * 3);
+			var leftPoint = new Point2D(MagicConstants.InitialGapSize * 1, MagicConstants.InitialGapSize * 3);
+			var rightPoint = new Point2D(MagicConstants.InitialGapSize * 3, MagicConstants.InitialGapSize * 1);
 
-			var willIntersect = GeometryHelper.IsLinePartsIntersected(fightersGroup.Center, leftPoint,
-				helicoptersGroup.Center, rightPoint);
 
-			if (!willIntersect)
+			if (fightersGroup.Center.GetDistanceTo(leftPoint) < helicoptersGroup.Center.GetDistanceTo(leftPoint))
 			{
 				fightersGroup
 					.SelectVehicles(VehicleType.Fighter)
-					.MoveTo(leftPoint, canBeParallel: true);
+					.MoveTo(leftPoint);
 
 				helicoptersGroup
 					.SelectVehicles(VehicleType.Helicopter)
@@ -81,7 +79,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			{
 				fightersGroup
 					.SelectVehicles(VehicleType.Fighter)
-					.MoveTo(rightPoint, canBeParallel: true);
+					.MoveTo(rightPoint);
 
 				helicoptersGroup
 					.SelectVehicles(VehicleType.Helicopter)

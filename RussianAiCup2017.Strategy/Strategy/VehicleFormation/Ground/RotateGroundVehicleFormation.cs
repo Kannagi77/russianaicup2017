@@ -57,7 +57,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		private void Bind(VehiclesGroup myArmy)
 		{
 			myArmy
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.Assign(MagicConstants.GroundFormationGroupId);
 			VehicleRegistry.RegisterNewFormation(Id, VehicleIds);
 			binded = true;

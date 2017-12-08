@@ -82,7 +82,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			for (var i = 0; i < 10; i++)
 			{
 				var inc = 1 + i * Adjustment + i * Step;
-				CommandManager.EnqueueCommand(new SelectCommand(Id, x1 + inc, y1, x2 + inc, y2, true));
+				CommandManager.EnqueueCommand(new SelectCommand(Id, x1 + inc, y1, x2 + inc, y2, VehicleType.Tank));
+				CommandManager.EnqueueCommand(new AddToSelectionCommand(Id, x1 + inc, y1, x2 + inc, y2, VehicleType.Arrv));
+				CommandManager.EnqueueCommand(new AddToSelectionCommand(Id, x1 + inc, y1, x2 + inc, y2, VehicleType.Ifv, true));
 				var moveCommand = new MoveCommand(Id, allUnits.Select(v => v.Id).ToList(), Step, 0);
 				CommandManager.EnqueueCommand(moveCommand);
 				commands.Add(moveCommand);
@@ -106,22 +108,30 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				CommandManager);
 
 			upperGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(Adjustment, 0);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 
 			bottomGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(-Adjustment, 0);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 
 			upperGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(0, MagicConstants.InitialGapSize, canBeParallel: true);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 
 			bottomGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(0, -MagicConstants.InitialGapSize);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 		}
@@ -138,7 +148,9 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			for (var i = 0; i < 10; i++)
 			{
 				var inc = 1 + i * Adjustment + i * Step;
-				CommandManager.EnqueueCommand(new SelectCommand(Id, x1, y1 + inc, x2, y2 + inc, true));
+				CommandManager.EnqueueCommand(new SelectCommand(Id, x1, y1 + inc, x2, y2 + inc, VehicleType.Tank));
+				CommandManager.EnqueueCommand(new AddToSelectionCommand(Id, x1, y1 + inc, x2, y2 + inc, VehicleType.Arrv));
+				CommandManager.EnqueueCommand(new AddToSelectionCommand(Id, x1, y1 + inc, x2, y2 + inc, VehicleType.Ifv, true));
 				var moveCommand = new MoveCommand(Id, allUnits.Select(v => v.Id).ToList(), 0, Step);
 				CommandManager.EnqueueCommand(moveCommand);
 				commands.Add(moveCommand);
@@ -162,22 +174,30 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				CommandManager);
 
 			leftGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(0, Adjustment);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 
 			rightGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(0, -Adjustment);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 
 			leftGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(MagicConstants.InitialGapSize, 0, canBeParallel: true);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 
 			rightGroup
-				.SelectVehicles()
+				.SelectVehicles(VehicleType.Tank)
+				.AddToSelectionVehicles(VehicleType.Arrv)
+				.AddToSelectionVehicles(VehicleType.Ifv)
 				.MoveByVector(-MagicConstants.InitialGapSize, 0);
 			commands.Add(CommandManager.PeekLastCommand(Id) as MoveCommand);
 		}
