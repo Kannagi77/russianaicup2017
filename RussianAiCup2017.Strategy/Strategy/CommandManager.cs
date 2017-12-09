@@ -69,7 +69,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 				return false;
 			var canPlayCommand = CanPlayCommand(player);
 			if (!canPlayCommand)
-				return false;
+				return true;
 			var currentCommand = formationQueue.Peek();
 #if DEBUG
 			RewindClient.Instance.Message($"=== Current command {currentCommand} ===");
