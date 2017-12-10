@@ -48,6 +48,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				return new VehicleFormationResult(this);
 
 			var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me)
+				.Where(f => f.Type == FacilityType.VehicleFactory)
 				.OrderBy(f => army.Center.GetDistanceTo(f.ToPoint(game)))
 				.FirstOrDefault();
 			var myGroudForcesCenter = VehicleRegistry.GetVehiclesByIds(

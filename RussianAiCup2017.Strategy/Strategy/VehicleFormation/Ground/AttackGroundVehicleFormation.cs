@@ -74,6 +74,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			if (world.TickIndex - lastClusteringTick > CacheTtl)
 			{
 				var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me)
+					.Where(f => f.Type == FacilityType.VehicleFactory)
 					.OrderBy(f => myArmy.Center.GetDistanceTo(f.ToPoint(game)))
 					.FirstOrDefault();
 				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles, world.TickIndex)?.ToList();
