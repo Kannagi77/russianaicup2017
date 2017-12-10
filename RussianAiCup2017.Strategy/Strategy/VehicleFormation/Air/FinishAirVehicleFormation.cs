@@ -55,7 +55,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			fightersGroup
 				.SelectVehicles(VehicleType.Fighter)
 				.Scale(ScaleFactor)
-				.MoveByVector(0, 6);
+				.MoveByVector(0, 5);
 
 			helicoptersGroup
 				.SelectVehicles(VehicleType.Helicopter)
@@ -65,7 +65,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 
 			fightersGroup
 				.SelectVehicles(VehicleType.Fighter)
-				.MoveByVector(fightersToTheRight ? -MagicConstants.InitialGapSize : MagicConstants.InitialGapSize, 0, canBeParallel: true);
+				.MoveByVector(fightersToTheRight ? -MagicConstants.InitialGapSize-5 : MagicConstants.InitialGapSize+5, 0, canBeParallel: true);
 
 			helicoptersGroup
 				.SelectVehicles(VehicleType.Helicopter)
