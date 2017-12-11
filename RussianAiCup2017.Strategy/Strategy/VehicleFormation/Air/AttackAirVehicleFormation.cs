@@ -105,7 +105,12 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			{
 				var nextTargetGroup = NextTargetGroup(myArmy, world, me);
 				var closest = VehicleRegistry.GetVehiclesByIds(nextTargetGroup).GetClosest(myGroudForcesCenter);
-				var nextTargetClosestPoint = closest?.ToPoint() ?? new Point2D(0, 0);
+				var nextTargetClosestPoint = nextTargetGroup.Any()
+					? (closest?.ToPoint() ?? new Point2D(0, 0))
+					: VehicleRegistry
+						  .GetUncapturedFacilities(world, me)
+						  .Select(f => f.ToPoint(game))
+						  .FirstOrDefault();
 
 				var minimumDistanceToNextTargetCenter = myVehicles.GetMinimumDistanceTo(nextTargetClosestPoint);
 				var minimumDistanceToNextTargetCenterCondition = minimumDistanceToNextTargetCenter > 0.8 * game.HelicopterVisionRange;
@@ -157,6 +162,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		private List<long> NextTargetGroup(VehiclesGroup myArmy, World world, Player me)
 		{
 			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
+			if (!enemyVehicles.Any())
+				return Enumerable
+					.Empty<long>()
+					.ToList();
 			if (world.TickIndex - lastClusteringTick > CacheTtl)
 			{
 				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles, world.TickIndex)?.ToList();

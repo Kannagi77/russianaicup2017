@@ -77,6 +77,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 					.Where(f => f.Type == FacilityType.VehicleFactory)
 					.OrderBy(f => myArmy.Center.GetDistanceTo(f.ToPoint(game)))
 					.FirstOrDefault();
+
 				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles, world.TickIndex)?.ToList();
 				if (nextEnemyGroup != null)
 				{
@@ -87,10 +88,10 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 						: nextEnemyGroup.GetCenterPoint();
 					return cachedTarget;
 				}
-				var nextEnemyTarget = enemyVehicles
+				var firstOrDefault = enemyVehicles
 					.OrderBy(v => v.GetDistanceTo(myArmy.Center))
-					.First()
-					.ToPoint();
+					.FirstOrDefault();
+				var nextEnemyTarget = firstOrDefault?.ToPoint() ?? new Point2D(world.Height, world.Width);
 				var nextTarget = closestUncapturedFacility != null
 				                 && myArmy.Center.GetDistanceTo(closestUncapturedFacility.ToPoint(game)) <
 				                 myArmy.Center.GetDistanceTo(nextEnemyTarget)
