@@ -140,7 +140,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			}
 
 			myArmy
-				.Select(MagicConstants.AirFormationGroupId)
+				.Select(Id)
 				.MoveByVector(direction.Length() > 5
 						? direction.Mul(0.1)
 						: direction,

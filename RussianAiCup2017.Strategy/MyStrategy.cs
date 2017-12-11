@@ -23,7 +23,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			VehicleRegistry.Update(world, me, game);
 			if (world.TickIndex == 0)
 			{
-				InitFormations(me);
+				InitFormations(world, me);
 			}
 #if DEBUG
 			RewindClient.Instance.Message($"=== Commands queue size: {CommandManager.GetCurrentQueueSize()} ===");
@@ -66,7 +66,19 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 			                           && v.Y < facility.Top + game.FacilityHeight / 2);
 		}
 
-		private static void InitFormations(Player me)
+		private static void InitFormations(World world, Player me)
+		{
+			if (!world.Facilities.Any())
+			{
+				InitFormationsFor1Round(me);
+			}
+			else
+			{
+				InitFormationsFor2Round(me);
+			}
+		}
+
+		private static void InitFormationsFor1Round(Player me)
 		{
 			formations.Add(new InitialGroundVehicleFormation(MagicConstants.GroundFormationGroupId,
 				VehicleRegistry
@@ -82,6 +94,46 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk
 					.Select(v => v.Id)
 					.ToList(),
 				CommandManager, VehicleRegistry));
+			VehicleRegistry.RemoveFromNewVehicles(VehicleRegistry.MyVehicleIds(me));
+		}
+
+		private static void InitFormationsFor2Round(Player me)
+		{
+			formations.Add(new RotateGroundVehicleFormation(MagicConstants.GroundFormationGroupId,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Tank)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry, true));
+			formations.Add(new RotateGroundVehicleFormation(MagicConstants.GroundFormationGroupId + 1,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Ifv)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry, true));
+			formations.Add(new RotateGroundVehicleFormation(MagicConstants.GroundFormationGroupId + 2,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Arrv)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry, true));
+			formations.Add(new RotateAirVehicleFormation(MagicConstants.GroundFormationGroupId + 3,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Fighter)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry, true));
+			formations.Add(new RotateAirVehicleFormation(MagicConstants.GroundFormationGroupId + 4,
+				VehicleRegistry
+					.MyVehicles(me)
+					.Where(v => v.Type == VehicleType.Helicopter)
+					.Select(v => v.Id)
+					.ToList(),
+				CommandManager, VehicleRegistry, true));
 			VehicleRegistry.RemoveFromNewVehicles(VehicleRegistry.MyVehicleIds(me));
 		}
 

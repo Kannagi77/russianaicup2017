@@ -56,7 +56,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			var nextTarget = NextTarget(myArmy, world, me, game);
 			var direction = myArmy.Center.To(nextTarget);
 			myArmy
-				.Select(MagicConstants.GroundFormationGroupId)
+				.Select(Id)
 				.MoveByVector(direction.Length() > 20
 						? direction.Mul(0.1)
 						: direction,

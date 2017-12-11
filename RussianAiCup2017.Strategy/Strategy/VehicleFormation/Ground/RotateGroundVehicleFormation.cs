@@ -8,15 +8,18 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 {
 	public class RotateGroundVehicleFormation : VehicleFormationBase
 	{
+		private readonly bool r2;
 		private RotateCommand command;
 		private bool binded;
 
 		public RotateGroundVehicleFormation(int id,
 			IEnumerable<long> vehicleIds,
 			CommandManager commandManager,
-			VehicleRegistry vehicleRegistry)
+			VehicleRegistry vehicleRegistry,
+			bool r2 = false)
 			: base(id, vehicleIds, commandManager, vehicleRegistry)
 		{
+			this.r2 = r2;
 		}
 
 		public override VehicleFormationResult PerformAction(World world, Player me, Game game)
@@ -56,11 +59,21 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 
 		private void Bind(VehiclesGroup myArmy)
 		{
-			myArmy
-				.SelectVehicles(VehicleType.Tank)
-				.AddToSelectionVehicles(VehicleType.Arrv)
-				.AddToSelectionVehicles(VehicleType.Ifv)
-				.Assign(MagicConstants.GroundFormationGroupId);
+			if (r2)
+			{
+				myArmy
+					.SelectVehicles()
+					.Assign(Id);
+			}
+			else
+			{
+				myArmy
+					.SelectVehicles(VehicleType.Tank)
+					.AddToSelectionVehicles(VehicleType.Arrv)
+					.AddToSelectionVehicles(VehicleType.Ifv)
+					.Assign(MagicConstants.GroundFormationGroupId);
+			}
+
 			VehicleRegistry.RegisterNewFormation(Id, VehicleIds);
 			binded = true;
 		}

@@ -7,7 +7,7 @@
 		public const double InitialGapSize = InitialGroupSize + 20.0;
 		public const int GroundFormationGroupId = 1;
 		public const int AirFormationGroupId = 2;
-		public static int NextFormationId = 3;
+		public static int NextFormationId = 6;
 		public const int NewVehiclesJoinRadius = 50;
 		public const int EnemiesClusteringRate = 30;
 	}
