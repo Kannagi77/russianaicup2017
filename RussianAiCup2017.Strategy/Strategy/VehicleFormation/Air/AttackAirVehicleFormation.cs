@@ -108,7 +108,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 				var nextTargetClosestPoint = nextTargetGroup.Any()
 					? (closest?.ToPoint() ?? new Point2D(0, 0))
 					: VehicleRegistry
-						  .GetUncapturedFacilities(world, me)
+						  .GetUncapturedFacilities(world, me, Id)
 						  .Select(f => f.ToPoint(game))
 						  .FirstOrDefault();
 

@@ -13,6 +13,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 		private readonly HashSet<long> idleVehicleIds = new HashSet<long>();
 		private readonly HashSet<long> newCreatedVehicles = new HashSet<long>();
 		private readonly Dictionary<int, List<long>> vehicleIdsByFormationId = new Dictionary<int, List<long>>();
+		private readonly Dictionary<long, int> captureTargets = new Dictionary<long, int>();
 
 		public void Update(World world, Player me, Game game)
 		{
@@ -40,6 +41,11 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			foreach (var vehicle in vehiclesByIds.Where(v => updates.All(vu => vu.Id != v.Key)))
 			{
 				idleVehicleIds.Add(vehicle.Key);
+			}
+
+			foreach (var facility in world.Facilities.Where(f => f.OwnerPlayerId == me.Id && captureTargets.ContainsKey(f.Id)))
+			{
+				captureTargets.Remove(facility.Id);
 			}
 #if DEBUG
 			foreach (var vehicle in vehiclesByIds.Values)
@@ -124,9 +130,19 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy
 			return vehicle.VisionRange * GetVisionCoefficient(vehicle, world, game);
 		}
 
-		public static IEnumerable<Facility> GetUncapturedFacilities(World world, Player me)
+		public IEnumerable<Facility> GetUncapturedFacilities(World world, Player me, int formationId)
 		{
-			return world.Facilities.Where(f => f.OwnerPlayerId != me.Id).ToList();
+			return world
+				.Facilities
+				.Where(f => f.OwnerPlayerId != me.Id)
+				.Where(f => !captureTargets.Where(p => p.Value != formationId).Select(p => p.Key).Contains(f.Id))
+				.ToList();
+		}
+
+		public void SetCaptureTarget(long facilityId, int formationId)
+		{
+			if (!captureTargets.ContainsKey(facilityId))
+				captureTargets.Add(facilityId, formationId);
 		}
 
 		public static IEnumerable<Facility> GetUnusedFacilities(World world, Player me)

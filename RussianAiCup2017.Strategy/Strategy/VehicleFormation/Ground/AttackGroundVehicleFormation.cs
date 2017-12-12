@@ -71,40 +71,31 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 		private Point2D NextTarget(VehiclesGroup myArmy, World world, Player me, Game game)
 		{
 			var enemyVehicles = VehicleRegistry.EnemyVehicles(me);
-			if (world.TickIndex - lastClusteringTick > CacheTtl)
-			{
-				var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me)
-					.Where(f => f.Type == FacilityType.VehicleFactory)
-					.OrderBy(f => myArmy.Center.GetDistanceTo(f.ToPoint(game)))
-					.FirstOrDefault();
-
-				var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles, world.TickIndex)?.ToList();
-				if (nextEnemyGroup != null)
-				{
-					cachedTargetGroup = nextEnemyGroup.Select(v => v.Id).ToList();
-					cachedTarget = closestUncapturedFacility != null
-						&& myArmy.Center.GetDistanceTo(closestUncapturedFacility.ToPoint(game)) < myArmy.Center.GetDistanceTo(nextEnemyGroup.GetCenterPoint())
-						? closestUncapturedFacility.ToPoint(game)
-						: nextEnemyGroup.GetCenterPoint();
-					return cachedTarget;
-				}
-				var firstOrDefault = enemyVehicles
-					.OrderBy(v => v.GetDistanceTo(myArmy.Center))
-					.FirstOrDefault();
-				var nextEnemyTarget = firstOrDefault?.ToPoint() ?? new Point2D(world.Height, world.Width);
-				var nextTarget = closestUncapturedFacility != null
-				                 && myArmy.Center.GetDistanceTo(closestUncapturedFacility.ToPoint(game)) <
-				                 myArmy.Center.GetDistanceTo(nextEnemyTarget)
-					? closestUncapturedFacility.ToPoint(game)
-					: nextEnemyTarget;
-				cachedTarget = nextTarget;
-				lastClusteringTick = world.TickIndex;
-				return nextTarget;
-			}
-			else
+			if (world.TickIndex - lastClusteringTick <= CacheTtl)
 			{
 				return cachedTarget;
 			}
+			var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me, Id)
+				.OrderBy(f => myArmy.Center.GetDistanceTo(f.ToPoint(game)))
+				.FirstOrDefault();
+
+			if (closestUncapturedFacility != null)
+			{
+				VehicleRegistry.SetCaptureTarget(closestUncapturedFacility.Id, Id);
+				cachedTarget = closestUncapturedFacility.ToPoint(game);
+				return cachedTarget;
+			}
+
+			var nextEnemyGroup = NextEnemyGroup(myArmy.Center, enemyVehicles, world.TickIndex)?.ToList();
+			if (nextEnemyGroup != null)
+			{
+				cachedTargetGroup = nextEnemyGroup.Select(v => v.Id).ToList();
+				cachedTarget = nextEnemyGroup.GetCenterPoint();
+				lastClusteringTick = world.TickIndex;
+				return cachedTarget;
+			}
+
+			return new Point2D(world.Height, world.Width);
 		}
 
 		private static IEnumerable<Vehicle> NextEnemyGroup(Point2D myArmyCenter, List<Vehicle> enemyVehicles, int tick)

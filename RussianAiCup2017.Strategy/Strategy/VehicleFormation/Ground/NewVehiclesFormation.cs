@@ -47,7 +47,7 @@ namespace Com.CodeGame.CodeWars2017.DevKit.CSharpCgdk.Strategy.VehicleFormation.
 			if (commands.Any())
 				return new VehicleFormationResult(this);
 
-			var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me)
+			var closestUncapturedFacility = VehicleRegistry.GetUncapturedFacilities(world, me, Id)
 				.Where(f => f.Type == FacilityType.VehicleFactory)
 				.OrderBy(f => army.Center.GetDistanceTo(f.ToPoint(game)))
 				.FirstOrDefault();
